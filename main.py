@@ -18,10 +18,13 @@ def job():
     count = 0
 
     while same != 1:
-        output = os.popen('cd ../Dockerfiles/; git log -1 --skip ' + str(count) + ' --pretty=format:%s').read()  # change your local repo directory
+        output = os.popen('cd ../Dockerfiles/; git log -1 --skip ' + str(count) + ' --pretty=format:%s').read()
         #print('Odczytany commit: ' + output)
         # output_oneline = os.linesep.join([s for s in output.splitlines() if s])
 
+        hash = os.popen('cd ../Dockerfiles/; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
+
+        print(hash)
         print("From file: " + previous_checked)
         print("New check: " + output)
 
@@ -44,7 +47,7 @@ def job():
             command = "./discord.sh " + "--username OpenVisualCloud " + "--avatar " + apo \
                       + "https://avatars3.githubusercontent.com/u/46843401?s=90&v=4" + apo \
                       + " --text " + apo + "🐳 NEW COMMIT: " + "**" + output + "**" \
-                      + " -path: <https://github.com/OpenVisualCloud/Dockerfiles/commits/v2.0>" + apo
+                      + " -path: <https://github.com/OpenVisualCloud/Dockerfiles/commit/" + hash + ">" + apo
             # + " --title " + apo + "Check more here" + apo\
             # + " --url " + apo + "https://github.com/OpenVisualCloud/Dockerfiles/commits/v2.0" + apo
             os.popen(command)
@@ -57,7 +60,8 @@ def job():
     return
 
 
-while True:
+if __name__ == '__main__':
     pull()
     job()
-    time.sleep(15)  # wait 15 seconds
+
+
