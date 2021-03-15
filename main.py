@@ -8,6 +8,7 @@ def pull():
     time.sleep(2)
     return
 
+
 def job():
     file = open("commit.txt", "r+")
     previous_checked1 = file.read()
@@ -19,7 +20,7 @@ def job():
 
     while same != 1:
         output = os.popen('cd ../Dockerfiles/; git log -1 --skip ' + str(count) + ' --pretty=format:%s').read()
-        #print('Odczytany commit: ' + output)
+        # print('Odczytany commit: ' + output)
         # output_oneline = os.linesep.join([s for s in output.splitlines() if s])
 
         hash = os.popen('cd ../Dockerfiles/; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
@@ -47,7 +48,7 @@ def job():
             command = "./discord.sh " + "--username OpenVisualCloud " + "--avatar " + apo \
                       + "https://avatars3.githubusercontent.com/u/46843401?s=90&v=4" + apo \
                       + " --text " + apo + "🐳 NEW COMMIT: " + "**" + output + "**" \
-                      + " -path: <https://github.com/OpenVisualCloud/Dockerfiles/commit/" + hash + ">" + apo
+                      + "\\n" + "path: <https://github.com/OpenVisualCloud/Dockerfiles/commit/" + hash + ">" + apo
             # + " --title " + apo + "Check more here" + apo\
             # + " --url " + apo + "https://github.com/OpenVisualCloud/Dockerfiles/commits/v2.0" + apo
             os.popen(command)
@@ -63,5 +64,3 @@ def job():
 if __name__ == '__main__':
     pull()
     job()
-
-
