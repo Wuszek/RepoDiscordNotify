@@ -20,9 +20,6 @@ def job():
 
     while same != 1:
         output = os.popen('cd ../Dockerfiles/; git log -1 --skip ' + str(count) + ' --pretty=format:%s').read()
-        # print('Odczytany commit: ' + output)
-        # output_oneline = os.linesep.join([s for s in output.splitlines() if s])
-
         hash = os.popen('cd ../Dockerfiles/; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
 
         print(hash)
@@ -36,7 +33,6 @@ def job():
             file.truncate()
             file.write(latest_commit)
             time.sleep(2)
-            # quit("Nic sie nie dzieje, wiec spadam.")
             print("-----------------------------------------------")
             file.close()
             same = 1
@@ -49,8 +45,6 @@ def job():
                       + "https://avatars3.githubusercontent.com/u/46843401?s=90&v=4" + apo \
                       + " --text " + apo + "🐳 NEW COMMIT: " + "**" + output + "**" \
                       + "\\n" + "path: <https://github.com/OpenVisualCloud/Dockerfiles/commit/" + hash + ">" + apo
-            # + " --title " + apo + "Check more here" + apo\
-            # + " --url " + apo + "https://github.com/OpenVisualCloud/Dockerfiles/commits/v2.0" + apo
             os.popen(command)
             print(command)
             count = count + 1
