@@ -4,7 +4,7 @@ import time
 
 
 def pull():
-    os.popen('cd ../Test2/; git config pull.rebase false; git pull') #change your local repo directory
+    os.popen('cd ../Dockerfiles/; git pull') #change your local repo directory
     time.sleep(2)
     return
 
@@ -14,7 +14,7 @@ def job():
     previous_checked = file.read()
     print("Previously: " + previous_checked)
 
-    output = os.popen('cd ../Test2/; git log -1 --pretty=%B').read() #change your local repo directory
+    output = os.popen('cd ../Dockerfiles/; git log -1 --pretty=%B').read() #change your local repo directory
     output_oneline = os.linesep.join([s for s in output.splitlines() if s])
 
     print("New check: " + output_oneline)
