@@ -1,1 +1,1 @@
-ubuntu2004 vcaca gva fix with girepository path (#695)
+owt server to latest master commit:387db8dfeaf52818cc248b34d990f6bdb222ecc4 && remove ubuntu20.4 support temporarily (#698)
