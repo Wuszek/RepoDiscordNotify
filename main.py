@@ -3,9 +3,11 @@ import os
 import time
 from datetime import datetime
 
+repo = "../Test2/"  # repository path relative to script location
+
 
 def pull():
-    os.popen('cd ../Dockerfiles/; git pull')  # change your local repo directory
+    os.popen('cd ' + repo + '; git pull')  # change your local repo directory
     time.sleep(2)
     return
 
@@ -20,8 +22,8 @@ def job():
     count = 0
 
     while True:
-        output = os.popen('cd ../Dockerfiles/; git log -1 --skip ' + str(count) + ' --pretty=format:%s').read()
-        commit_hash = os.popen('cd ../Dockerfiles/; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
+        output = os.popen('cd ' + repo + '; git log -1 --skip ' + str(count) + ' --pretty=format:%s').read()
+        commit_hash = os.popen('cd ' + repo + '; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
         # commit_date = os.popen('cd ../Dockerfiles/; git log -1 --skip ' + str(count) + ' --pretty="format:%ar"').read()
 
         now = datetime.now()  # current date and time
@@ -33,7 +35,7 @@ def job():
 
         if previous_checked == output:
             print("No new updates. Finished at " + date_time)
-            latest_commit = os.popen('cd ../Dockerfiles/; git log -1 --pretty=format:%s').read()
+            latest_commit = os.popen('cd ' + repo + '; git log -1 --pretty=format:%s').read()
             file.seek(0)
             file.truncate()
             file.write(latest_commit)
@@ -41,7 +43,10 @@ def job():
             print("-----------------------------------------------")
             file.close()
             # same = 1
-            quit("All done")
+            # quit("All done")
+            print("Sleeping for 30s now \n")
+            time.sleep(30)
+            break
 
         else:
             print("New commit!")
@@ -61,6 +66,7 @@ def job():
     # return
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
+while True:
     pull()
     job()
