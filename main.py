@@ -22,7 +22,7 @@ def job():
     while True:
         output = os.popen('cd ../Dockerfiles/; git log -1 --skip ' + str(count) + ' --pretty=format:%s').read()
         commit_hash = os.popen('cd ../Dockerfiles/; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
-        commit_date = os.popen('cd ../Dockerfiles/; git log -1 --skip ' + str(count) + ' --pretty="format:%ar"').read()
+        # commit_date = os.popen('cd ../Dockerfiles/; git log -1 --skip ' + str(count) + ' --pretty="format:%ar"').read()
 
         now = datetime.now()  # current date and time
         date_time = now.strftime("%d/%m/%Y, %H:%M:%S")
@@ -48,7 +48,7 @@ def job():
             apo = '"'
             command = "./discord.sh " + "--username OpenVisualCloud " + "--avatar " + apo \
                       + "https://avatars3.githubusercontent.com/u/46843401?s=90&v=4" + apo \
-                      + " --text " + apo + "🐳 NEW COMMIT [" + commit_date + "]: " + "**" + output + "**" \
+                      + " --text " + apo + "🐳 NEW COMMIT: " + "**" + output + "**" \
                       + "\\n" + "path: <https://github.com/OpenVisualCloud/Dockerfiles/commit/" \
                       + commit_hash + ">" + apo
             os.popen(command)
