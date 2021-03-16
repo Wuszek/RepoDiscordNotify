@@ -1,0 +1,78 @@
+Next loop started: 16/03/2021, 14:00:03
+Last commit: Updated commit next2
+Now checked: Updated commit next2
+No new updates.
+-----------------------------------------------
+Sleeping for 1min now 
+
+Next loop started: 16/03/2021, 14:01:09
+Last commit: Updated commit next2
+Now checked: Updated commit next2
+No new updates.
+-----------------------------------------------
+Sleeping for 1min now 
+
+Next loop started: 16/03/2021, 14:02:15
+Last commit: Updated commit next2
+Now checked: Updated commit next2
+No new updates.
+-----------------------------------------------
+Sleeping for 1min now 
+
+Next loop started: 16/03/2021, 14:03:22
+Last commit: Updated commit next2
+Now checked: Bot purposes commit
+New commit!
+-----------------------------------------------
+Last commit: Updated commit next2
+Now checked: Updated commit next2
+No new updates.
+-----------------------------------------------
+Sleeping for 1min now 
+
+Next loop started: 16/03/2021, 14:04:30
+Last commit: Bot purposes commit
+Now checked: Bot purposes commit
+No new updates.
+-----------------------------------------------
+Sleeping for 1min now 
+
+Next loop started: 16/03/2021, 14:05:36
+Last commit: Bot purposes commit
+Now checked: Bot purposes commit
+No new updates.
+-----------------------------------------------
+Sleeping for 1min now 
+
+Next loop started: 16/03/2021, 14:06:42
+Last commit: Bot purposes commit
+Now checked: SVT changes check
+New commit!
+-----------------------------------------------
+Last commit: Bot purposes commit
+Now checked: Bot purposes commit
+No new updates.
+-----------------------------------------------
+Sleeping for 1min now 
+
+Next loop started: 16/03/2021, 14:07:50
+Last commit: SVT changes check
+Now checked: SVT changes check
+No new updates.
+-----------------------------------------------
+Sleeping for 1min now 
+
+Next loop started: 16/03/2021, 14:08:56
+Last commit: SVT changes check
+Now checked: SVT changes check
+No new updates.
+-----------------------------------------------
+Sleeping for 1min now 
+
+Next loop started: 16/03/2021, 14:10:02
+Last commit: SVT changes check
+Now checked: SVT changes check
+No new updates.
+-----------------------------------------------
+Sleeping for 1min now 
+
