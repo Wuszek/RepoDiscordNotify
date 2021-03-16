@@ -58,7 +58,7 @@ def job():
             print("-----------------------------------------------")
 
 
-# while True: # use this loop, to run script once (find new commits and quit when no new updates found)
+# while True: # use this loop, to run script forever (or once - find new commits and quit when no new updates found)
 while counter < 1:  # set how many times script should run its loop
     now = datetime.now()
     loop_time = now.strftime("%d/%m/%Y, %H:%M:%S")
