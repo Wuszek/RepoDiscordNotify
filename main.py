@@ -4,12 +4,12 @@ import time
 import sys
 from datetime import datetime
 
-repo = "../Test2/"  # repository path relative to script location
+repo = "../Dockerfiles/"  # set repository path relative to script location
 counter = 0
 
 
 def pull():
-    os.popen('cd ' + repo + '; git pull')  # change your local repo directory
+    os.popen('cd ' + repo + '; git pull')
     time.sleep(1)
     return
 
@@ -25,9 +25,7 @@ def job():
     while True:
         output = os.popen('cd ' + repo + '; git log -1 --skip ' + str(count) + ' --pretty=format:%s').read()
         commit_hash = os.popen('cd ' + repo + '; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
-        # commit_date = os.popen('cd ' + repo + '; git log -1 --skip ' + str(count) + ' --pretty="format:%ar"').read()
 
-        # print(commit_hash)
         print("Last commit: " + previous_checked)
         print("Now checked: " + output)
 
@@ -40,10 +38,10 @@ def job():
             time.sleep(1)
             print("-----------------------------------------------")
             file.close()
-            # quit("All done")
-            print("Sleeping for 1min now \n")
+            print("Sleeping for 1min now, because no new commits were pushed.")
             print("-----------------------------------------------")
-            time.sleep(60)  # set break after no new commits to 60s
+            time.sleep(60)  # set break after no new commits found to 60s
+            # quit("All done")  # use this with while True loop to run script once
             break
 
         else:
@@ -55,16 +53,13 @@ def job():
                       + "\\n" + "path: <https://github.com/OpenVisualCloud/Dockerfiles/commit/" \
                       + commit_hash + ">" + apo
             os.popen(command)
-            # print(command)
-            count = count + 1
-            # print(count)
-            time.sleep(2)
+            count = count + 1  # to move to next new commit
+            time.sleep(1)
             print("-----------------------------------------------")
 
 
-# if __name__ == '__main__':  # change main with while, to run script in loop
-# while True:
-while counter < 10:  # set counter
+# while True: # use this loop, to run script once (find new commits and quit when no new updates found)
+while counter < 1:  # set how many times script should run its loop
     now = datetime.now()
     loop_time = now.strftime("%d/%m/%Y, %H:%M:%S")
 
