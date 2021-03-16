@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Discord.sh - Discord on command-line
-# by ChaoticWeg and fieu
+# by ChaoticWeg and Suce
 
 shopt -s lastpipe   # avoid subshell weirdness hopefully
 shopt -so pipefail  # hopefully correctly get $? in substitution
@@ -34,14 +34,17 @@ thisdir="$(cd "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))" && pwd)"
 webhook_file="${thisdir}/.webhook"
 
 help_text="Usage: discord.sh --webhook-url=<url> [OPTIONS]
+
 General options:
   --help                         Display this help and exit
   --text <text>                  Body text of message to send
   --tts                          Send message with text-to-speech enabled
   --webhook-url                  Specify the Discord webhook URL
+
 Identity options:
   --username <name>              Set username to <name>
   --avatar <url>                 Set avatar to image located at <url>
+
 Embedded content options:
   Main:
     --title <title>              Display embed title as <title>
@@ -52,14 +55,17 @@ Embedded content options:
         Option 1: 0x<hexadecimal number> (Example: --color 0xFFFFF)
         Option 2: <decimal number> (Example: --color 16777215)
     --thumbnail <url>            Set thumbnail to image located at <url>
+
 Author:
   --author <name>                Display author name as <name>
   --author-icon <url>            Display author icon as image located at <url>
   --author-url <url>             Set author title to go to <url> when clicked
+
 Image:
   --image <url>                  Set image to image located at <url>
   --image-height <number>        Set image height to <number> pixels
   --image-width <number>         Set image width to <number> pixels
+
 Footer:
   --footer <text>                Display <text> in footer
   --footer-icon <url>            Display image located at <url> in footer
