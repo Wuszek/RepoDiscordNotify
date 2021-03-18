@@ -76,3 +76,4 @@ venv
 log.txt
 .webhook
 commit.txt
+discord.sh

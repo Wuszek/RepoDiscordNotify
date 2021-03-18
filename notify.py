@@ -4,9 +4,23 @@ import time
 import sys
 import getopt
 import re
+import requests
 from datetime import datetime
 
 counter = 0  # Counter if you want to run script with finite number of loops. Leave it 0!
+
+
+def get_files():
+    if os.path.isfile('discord.sh'):
+        print("File 'discord.sh' already exists. Proceeding...")
+    else:
+        filename = "discord.sh"
+        url = 'https://raw.githubusercontent.com/ChaoticWeg/discord.sh/master/discord.sh'
+        f = requests.get(url)
+        open(filename, 'wb').write(f.content)
+        os.popen('chmod +x discord.sh').read()
+        print("File 'discord.sh' downloaded. Proceeding...")
+    return
 
 
 def clone(repo, branch, dir_name):
@@ -42,7 +56,7 @@ def job(dir_name):
     previous_checked1 = file.read()
     previous_checked = os.linesep.join([s for s in previous_checked1.splitlines() if s])
 
-    time.sleep(1)
+    # time.sleep(1)
     count = 0
 
     while True:
@@ -77,7 +91,7 @@ def job(dir_name):
 
             os.popen(command)
             count = count + 1  # to move to next new commit
-            time.sleep(1)
+            # time.sleep(1)
             print("-----------------------------------------------")
 
 
@@ -112,7 +126,7 @@ def getarguments(argv):
         if opt in ("-r", "--repo"):
             repo = arg
             if re.match(r"^(([A-Za-z0-9]+@|http(|s)\:\/\/)|(http(|s)\:\/\/[A-Za-z0-9]+@))([A-Za-z0-9.]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git){1}$", repo):
-                print("Valid git repository url. Continuing...")
+                print("Valid git repository url. Proceeding...")
             else:
                 print("Invalid git repository url.\n")
                 usage()
@@ -130,13 +144,17 @@ def getarguments(argv):
 if __name__ == '__main__':
     loop_time = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
     sys.stdout = open('log.txt', 'a+')  # Comment this, to enable live logging in terminal
+    print("Program started: " + loop_time)
     repo, branch = getarguments(sys.argv[1:])
     dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
-    print("Program started: " + loop_time)
+    get_files()
     clone(repo, branch, dir_name)
     while True:  # Or while counter < given_number, to get finite number of loops
         pull(dir_name)
         job(dir_name)
-        # counter += 1
+      # counter += 1
+
+    print("Program exited.")
+
     sys.stdout.close()  # Comment this, to enable live logging in terminal
     # exit()  # Uncomment, if using finite number of loops
