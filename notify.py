@@ -50,8 +50,6 @@ def job(dir_name):
         commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
         commit_link = f"{repo[:-4]}/commit/"
         sleep_time = 10  # Sleep timer in seconds. Change to customize repo refresh rate
-        # print("Last commit: " + previous_checked)
-        # print("Now checked: " + output)
 
         if previous_checked == output:
             print(f"No new updates. Sleeping for {sleep_time}s now.")
@@ -65,7 +63,7 @@ def job(dir_name):
             break
 
         else:
-            print("New commit!")
+            print("New commit! -> " + output)
             # EXAMPLE DISCORD BOT MESSAGE
             # command = f'./discord.sh \
             #             --username "NotificationBot" \
@@ -85,12 +83,12 @@ def job(dir_name):
 
 def usage():
     print("====================================== DISPLAYING HELP ======================================")
-    print("python3 main.py --repo <link_to_repository> --branch <branch_to_be_observed>")
+    print("python3 notify.py --repo <link_to_repository> --branch <branch_to_be_observed>")
     print("--repo: Link to cloned repo, with .git at the end.")
     print("--branch: Branch name, that will be cloned. Default is master.")
     print("In code: setup sleep timer and Discord Bot message.")
     print("e.g. of usage:")
-    print("python3 main.py --repo https://github.com/OpenVisualCloud/Dockerfiles.git --branch v21.3")
+    print("python3 notify.py --repo https://github.com/OpenVisualCloud/Dockerfiles.git --branch v21.3")
     print("=============================================================================================")
     sys.exit()
 
@@ -98,7 +96,7 @@ def usage():
 def getarguments(argv):
     global opts
     repo = None
-    branch = "master"
+    branch = "master" # Default master, if not given otherwise
     short_opts = 'hr:b:'
     long_opts = ["help", "repo=", "branch="]
     try:
@@ -120,7 +118,7 @@ def getarguments(argv):
                 usage()
         elif opt in ("-b", "--branch"):
             branch = arg
-            print("Choosen branch: " + branch)
+            print("Chosen branch: " + branch)
         elif opt in ("-h", "--help"):
             usage()
         else:
@@ -131,15 +129,14 @@ def getarguments(argv):
 
 if __name__ == '__main__':
     loop_time = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
+    sys.stdout = open('log.txt', 'a+')  # Comment this, to enable live logging in terminal
     repo, branch = getarguments(sys.argv[1:])
     dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
     print("Program started: " + loop_time)
-
-    # sys.stdout = open('log.txt', 'a+')
     clone(repo, branch, dir_name)
-    while True:  # or while counter < given number of loops
+    while True:  # Or while counter < given_number, to get finite number of loops
         pull(dir_name)
         job(dir_name)
         # counter += 1
-    # sys.stdout.close()
-    # exit()
+    sys.stdout.close()  # Comment this, to enable live logging in terminal
+    # exit()  # Uncomment, if using finite number of loops
