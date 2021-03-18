@@ -6,7 +6,7 @@ import getopt
 import re
 from datetime import datetime
 
-counter = 0
+counter = 0  # Counter if you want to run script with finite number of loops. Leave it 0!
 
 
 def clone(repo, branch, dir_name):
@@ -29,13 +29,11 @@ def clone(repo, branch, dir_name):
     file = open("commit.txt", "w")
     file.write(latest_commit_to_file)
     file.close()
-
     return
 
 
 def pull(dir_name):
     os.popen('cd ../' + dir_name + '; git pull').read()
-    time.sleep(1)
     return
 
 
@@ -50,7 +48,8 @@ def job(dir_name):
     while True:
         output = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%s').read()
         commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
-        sleep_time = 10
+        commit_link = f"{repo[:-4]}/commit/"
+        sleep_time = 10  # Sleep timer in seconds. Change to customize repo refresh rate
         # print("Last commit: " + previous_checked)
         # print("Now checked: " + output)
 
@@ -62,17 +61,22 @@ def job(dir_name):
             file.write(latest_commit)
             file.close()
             print("-----------------------------------------------")
-            time.sleep(sleep_time)  # set break after no new commits found to 60s
+            time.sleep(sleep_time)  # Set sleep time after no new commits found to ?seconds
             break
 
         else:
             print("New commit!")
-            apo = '"'
-            command = "./discord.sh " + "--username OpenVisualCloud " + "--avatar " + apo \
-                      + "https://avatars3.githubusercontent.com/u/46843401?s=90&v=4" + apo \
-                      + " --text " + apo + "🐳 NEW COMMIT: " + "**" + output + "**" \
-                      + "\\n" + "path: <https://github.com/OpenVisualCloud/Dockerfiles/commit/" \
-                      + commit_hash + ">" + apo
+            # EXAMPLE DISCORD BOT MESSAGE
+            # command = f'./discord.sh \
+            #             --username "NotificationBot" \
+            #             --avatar "https://i.imgur.com/12jyR5Q.png" \
+            #             --text "Hello, world!"'
+            # DOCKERFILES DISCORD BOT MESSAGE
+            command = f'./discord.sh \
+                        --username "OpenVisualCloud" \
+                        --avatar "https://avatars3.githubusercontent.com/u/46843401?s=90&v=4" \
+                        --text "🐳 NEW COMMIT: **{output}** \\n path: <{commit_link}{commit_hash}>"'
+
             os.popen(command)
             count = count + 1  # to move to next new commit
             time.sleep(1)
