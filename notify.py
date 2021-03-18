@@ -143,9 +143,9 @@ def getarguments(argv):
 
 if __name__ == '__main__':
     loop_time = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
-    sys.stdout = open('log.txt', 'a+')  # Comment this, to enable live logging in terminal
-    print("Program started: " + loop_time)
+    # sys.stdout = open('log.txt', 'a+')  # Comment this, to enable live logging in terminal
     repo, branch = getarguments(sys.argv[1:])
+    print("Program started: " + loop_time)
     dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
     get_files()
     clone(repo, branch, dir_name)
@@ -156,5 +156,5 @@ if __name__ == '__main__':
 
     print("Program exited.")
 
-    sys.stdout.close()  # Comment this, to enable live logging in terminal
+    # sys.stdout.close()  # Comment this, to enable live logging in terminal
     # exit()  # Uncomment, if using finite number of loops
