@@ -28,6 +28,13 @@ def clone(repo, branch):
         os.popen('cd ../; git clone --single-branch --branch ' + branch + ' ' + repo).read()
         # subprocess.Popen("cd ../ \n git clone --single-branch --branch {branch} {repo}")
 
+    # take second latest commit and create commit.txt file. Just to make sure, that script would catch next
+    # newer commit and send message to Discord
+    latest_commit_to_file = os.popen('cd ../' + dir_name + '; git log -1 --skip 1 --pretty=format:%s').read()
+    file = open("commit.txt", "w")
+    file.write(latest_commit_to_file)
+    file.close()
+
     return dir_name
 
 
@@ -50,22 +57,22 @@ def job(repo):
     while True:
         output = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%s').read()
         commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
-
+        sleep_time = 10
         # print("Last commit: " + previous_checked)
         # print("Now checked: " + output)
 
         if previous_checked == output:
-            print("No new updates.")
+            print(f"No new updates. Sleeping for {sleep_time}s now.")
             latest_commit = os.popen('cd ../' + dir_name + '; git log -1 --pretty=format:%s').read()
             file.seek(0)
             file.truncate()
             file.write(latest_commit)
-            time.sleep(1)
-            print("-----------------------------------------------")
             file.close()
-            print("Sleeping for 1min now, because no new commits were pushed.")
+            #time.sleep(1)
             print("-----------------------------------------------")
-            time.sleep(10)  # set break after no new commits found to 60s
+            # print("Sleeping for 1min now, because no new commits were pushed.")
+            # print("-----------------------------------------------")
+            time.sleep(sleep_time)  # set break after no new commits found to 60s
             # quit("All done")  # use this with while True loop to run script once
             break
 
