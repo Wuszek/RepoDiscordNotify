@@ -85,12 +85,13 @@ def job(dir_name):
 
 def usage():
     print("====================================== DISPLAYING HELP ======================================")
-    print("python3 main.py --repo <link_to_repository> --branch <branch_to_be_observed (default master)>")
-    print("--repo: Link to clone repo, with .git at the end")
-    print("--branch: Branch name, that will be cloned")
-    print("e.g.")
+    print("python3 main.py --repo <link_to_repository> --branch <branch_to_be_observed>")
+    print("--repo: Link to cloned repo, with .git at the end.")
+    print("--branch: Branch name, that will be cloned. Default is master.")
+    print("In code: setup sleep timer and Discord Bot message.")
+    print("e.g. of usage:")
     print("python3 main.py --repo https://github.com/OpenVisualCloud/Dockerfiles.git --branch v21.3")
-    print("=============================================================================================\n")
+    print("=============================================================================================")
     sys.exit()
 
 
@@ -112,14 +113,14 @@ def getarguments(argv):
     for opt, arg in opts:
         if opt in ("-r", "--repo"):
             repo = arg
-        elif opt in ("-b", "--branch"):
-            branch = arg
-            if re.match(r"/^(([A-Za-z0-9]+@|http(|s)\:\/\/)|(http(|s)\:\/\/[A-Za-z0-9]+@))([A-Za-z0-9.]\
-                        +(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git){1}$/i", branch):
+            if re.match(r"^(([A-Za-z0-9]+@|http(|s)\:\/\/)|(http(|s)\:\/\/[A-Za-z0-9]+@))([A-Za-z0-9.]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git){1}$", repo):
                 print("Valid git repository url. Continuing...")
             else:
                 print("Invalid git repository url.\n")
                 usage()
+        elif opt in ("-b", "--branch"):
+            branch = arg
+            print("Choosen branch: " + branch)
         elif opt in ("-h", "--help"):
             usage()
         else:
@@ -129,13 +130,12 @@ def getarguments(argv):
 
 
 if __name__ == '__main__':
+    loop_time = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
     repo, branch = getarguments(sys.argv[1:])
     dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
-
-    now = datetime.now()
-    loop_time = now.strftime("%d/%m/%Y, %H:%M:%S")
-    # sys.stdout = open('log.txt', 'a+')
     print("Program started: " + loop_time)
+
+    # sys.stdout = open('log.txt', 'a+')
     clone(repo, branch, dir_name)
     while True:  # or while counter < given number of loops
         pull(dir_name)
