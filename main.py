@@ -4,20 +4,15 @@ import time
 import sys
 import getopt
 import re
-import subprocess
 from datetime import datetime
 
-# repo = "../Dockerfiles/"  # set repository path relative to script location
 counter = 0
 
 
-def clone(repo, branch):
-    dir_name = re.search(r"(([^\/]+).{4})$", repo).group(2)
-
+def clone(repo, branch, dir_name):
     if os.path.isdir('../' + dir_name):
         actual_branch = os.popen('cd ../' + dir_name + '; git branch').read()[2:]
         filtered_branch = os.linesep.join([s for s in actual_branch.splitlines() if s])
-        # print(filtered_branch)
 
         if filtered_branch == branch:
             print("Repository already cloned with selected branch.")
@@ -26,27 +21,24 @@ def clone(repo, branch):
             os.popen('cd ../; rm -rf ' + dir_name + '; git clone --single-branch --branch ' + branch + " " + repo).read()
     else:
         os.popen('cd ../; git clone --single-branch --branch ' + branch + ' ' + repo).read()
-        # subprocess.Popen("cd ../ \n git clone --single-branch --branch {branch} {repo}")
 
     # take second latest commit and create commit.txt file. Just to make sure, that script would catch next
-    # newer commit and send message to Discord
+    # newer commit and send message using Discord bot
     latest_commit_to_file = os.popen('cd ../' + dir_name + '; git log -1 --skip 1 --pretty=format:%s').read()
     file = open("commit.txt", "w")
     file.write(latest_commit_to_file)
     file.close()
 
-    return dir_name
+    return
 
 
-def pull(repo):
-    dir_name = re.search(r"(([^\/]+).{4})$", repo).group(2)
+def pull(dir_name):
     os.popen('cd ../' + dir_name + '; git pull').read()
     time.sleep(1)
     return
 
 
-def job(repo):
-    dir_name = re.search(r"(([^\/]+).{4})$", repo).group(2)
+def job(dir_name):
     file = open("commit.txt", "r+")
     previous_checked1 = file.read()
     previous_checked = os.linesep.join([s for s in previous_checked1.splitlines() if s])
@@ -68,12 +60,8 @@ def job(repo):
             file.truncate()
             file.write(latest_commit)
             file.close()
-            #time.sleep(1)
             print("-----------------------------------------------")
-            # print("Sleeping for 1min now, because no new commits were pushed.")
-            # print("-----------------------------------------------")
             time.sleep(sleep_time)  # set break after no new commits found to 60s
-            # quit("All done")  # use this with while True loop to run script once
             break
 
         else:
@@ -126,22 +114,18 @@ def getarguments(argv):
     return repo, branch
 
 
-# while True: # use this loop, to run script forever (or once - find new commits and quit when no new updates found)
-# while counter < 1:  # set how many times script should run its loop
 if __name__ == '__main__':
     repo, branch = getarguments(sys.argv[1:])
+    dir_name = re.search(r"(([^\/]+).{4})$", repo).group(2)
+
     now = datetime.now()
     loop_time = now.strftime("%d/%m/%Y, %H:%M:%S")
     # sys.stdout = open('log.txt', 'a+')
-    # print("Next loop started: " + loop_time)
-    clone(repo, branch)
-
-    while True:
-        pull(repo)
-        job(repo)
-
-    # pull()
-    # job()
+    print("Program started: " + loop_time)
+    clone(repo, branch, dir_name)
+    while True: # or while counter < given number of loops
+        pull(dir_name)
+        job(dir_name)
+        # counter += 1
     # sys.stdout.close()
-    # counter += 1
     exit()
