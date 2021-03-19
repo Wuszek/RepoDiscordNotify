@@ -8,7 +8,7 @@ import requests
 from datetime import datetime
 
 counter = 0  # Counter if you want to run script with finite number of loops. Leave it 0!
-
+latest_commit_hash = ""
 
 def get_files():
     if os.path.isfile('discord.sh'):
@@ -39,10 +39,12 @@ def clone(repo, branch, dir_name):
 
     # take second latest commit and create commit.txt file. Just to make sure, that script would catch next
     # newer commit and send message using Discord bot
-    latest_commit_to_file = os.popen('cd ../' + dir_name + '; git log -1 --skip 1 --pretty=format:%s').read()
-    file = open("commit.txt", "w")
-    file.write(latest_commit_to_file)
-    file.close()
+    global latest_commit_hash
+    latest_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip 1 --pretty=format:%H').read()
+    print(f'Latest commit hash: {latest_commit_hash}')
+    # file = open("commit.txt", "w")
+    # file.write(latest_commit_to_file)
+    # file.close()
     return
 
 
@@ -149,9 +151,9 @@ if __name__ == '__main__':
     dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
     get_files()
     clone(repo, branch, dir_name)
-    while True:  # Or while counter < given_number, to get finite number of loops
-        pull(dir_name)
-        job(dir_name)
+    # while True:  # Or while counter < given_number, to get finite number of loops
+    #     pull(dir_name)
+    #     job(dir_name)
       # counter += 1
 
     print("Program exited.")
