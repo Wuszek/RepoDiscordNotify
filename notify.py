@@ -103,31 +103,21 @@ def argument_parse(argv):
     parser = argparse.ArgumentParser(description="Repo_discord_notifier tool", add_help=True,\
                                      formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=100, width=250))
 
+    def git_repo_regex(arg_value, pat=re.compile(r"^(([A-Za-z0-9]+@|http(|s)\:\/\/)|(http(|s)\:\/\/[A-Za-z0-9]+@))([A-Za\
+                                                -z0-9.]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git){1}$")):
+        if not pat.match(arg_value):
+            raise argparse.ArgumentTypeError("Invalid repository link.")
+        print("Valid git repository url. Proceeding...")
+        return arg_value
+
     parser.add_argument('-r', '--repo', action='store', dest="repo", help="Repository linkLink to cloned repo,\
-                        with .git at the end.", required=True)
+                        with .git at the end.", type=git_repo_regex, required=True)
     parser.add_argument('-b', '--branch', action='store', dest="branch", help="Branch name, that will be cloned. \
                         Default is master.", default="master")
 
-    # print("??????????????")
-    # parser.print_help()
-
     args = parser.parse_args()
 
-    if args.repo:
-        repo_link = args.repo
-        if re.match(r"^(([A-Za-z0-9]+@|http(|s)\:\/\/)|(http(|s)\:\/\/[A-Za-z0-9]+@))([A-Za-z0-9.]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git){1}$", repo_link):
-            print("Valid git repository url. Proceeding...")
-        else:
-            print("Invalid git repository url.\n")
-            usage()
-
-    if args.branch:
-        branch_ver = args.branch
-
-    if args.help:
-        print("??????????????????????????")
-
-    return repo_link, branch_ver
+    return args.repo, args.branch
 
 
 # def getarguments(argv):
