@@ -1,12 +1,12 @@
 # !/usr/bin/python
-import os
-import time
-import sys
-import getopt
-import re
-import requests
 import argparse
+import os
+import re
+import sys
+import time
 from datetime import datetime
+
+import requests
 
 counter = 0  # Counter if you want to run script with finite number of loops. Leave it 0!
 latest_commit_hash = ""
@@ -87,91 +87,40 @@ def job(dir_name):
             print("-----------------------------------------------")
 
 
-def usage():
-    print("====================================== DISPLAYING HELP ======================================")
-    print("python3 notify.py --repo <link_to_repository> --branch <branch_to_be_observed>")
-    print("--repo: Link to cloned repo, with .git at the end.")
-    print("--branch: Branch name, that will be cloned. Default is master.")
-    print("In code: setup sleep timer and Discord Bot message.")
-    print("e.g. of usage:")
-    print("python3 notify.py --repo https://github.com/OpenVisualCloud/Dockerfiles.git --branch v21.3")
-    print("=============================================================================================")
-    sys.exit()
-
-
 def argument_parse(argv):
-    parser = argparse.ArgumentParser(description="Repo_discord_notifier tool", add_help=True,\
-                                     formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=100, width=250))
+    parser = argparse.ArgumentParser\
+    (usage="python3 notify.py [--help] --repo <link_to_repository> [--branch <branch_to_be_observed>]", \
+    description="Repo_Discord_Notify tool - get pinged, whenever new commit appears!", \
+    epilog="© 2021, wiktor.kobiela, Repo_Discord_Notify - feel free to contribute", prog="Repo_Discord_Notify", \
+    add_help=True, formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=100, width=250))
 
-    def git_repo_regex(arg_value, pat=re.compile(r"^(([A-Za-z0-9]+@|http(|s)\:\/\/)|(http(|s)\:\/\/[A-Za-z0-9]+@))([A-Za\
-                                                -z0-9.]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git){1}$")):
+    def git_repo_regex(arg_value, pat=re.compile(r"^(([A-Za-z0-9]+@|http(|s)\:\/\/)|(http(|s)\:\/\/[A-Za-z0-9]+@))([A-Za-z0-9.]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git){1}$")):
         if not pat.match(arg_value):
             raise argparse.ArgumentTypeError("Invalid repository link.")
         print("Valid git repository url. Proceeding...")
         return arg_value
 
-    parser.add_argument('-r', '--repo', action='store', dest="repo", help="Repository linkLink to cloned repo,\
+    parser.add_argument('-r', '--repo', action='store', dest="repo", help="repository link to cloned repo,\
                         with .git at the end.", type=git_repo_regex, required=True)
-    parser.add_argument('-b', '--branch', action='store', dest="branch", help="Branch name, that will be cloned. \
+    parser.add_argument('-b', '--branch', action='store', dest="branch", help="branch name, that will be cloned. \
                         Default is master.", default="master")
+    parser.add_argument('--version', action='version', version='%(prog)s alpha')
 
     args = parser.parse_args()
-
     return args.repo, args.branch
-
-
-# def getarguments(argv):
-#     global opts
-#     repo = None
-#     branch = "master" # Default master, if not given otherwise
-#     short_opts = 'hr:b:'
-#     long_opts = ["help", "repo=", "branch="]
-#     try:
-#         opts, _ = getopt.getopt(argv, short_opts, long_opts)
-#         if not opts:
-#             print("Error: No options supplied")
-#             usage()
-#     except getopt.GetoptError:
-#         print(f"Error in options or options not specified.\n")
-#         usage()
-#
-#     for opt, arg in opts:
-#         if opt in ("-r", "--repo"):
-#             repo = arg
-#             if re.match(r"^(([A-Za-z0-9]+@|http(|s)\:\/\/)|(http(|s)\:\/\/[A-Za-z0-9]+@))([A-Za-z0-9.]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git){1}$", repo):
-#                 print("Valid git repository url. Proceeding...")
-#             else:
-#                 print("Invalid git repository url.\n")
-#                 usage()
-#         elif opt in ("-b", "--branch"):
-#             branch = arg
-#             print("Chosen branch: " + branch)
-#         elif opt in ("-h", "--help"):
-#             usage()
-#         else:
-#             print(f"Unsupported option {opt}")
-#             usage()
-#     return repo, branch
 
 
 if __name__ == '__main__':
     loop_time = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
     # sys.stdout = open('log.txt', 'a+')  # Comment this, to enable live logging in terminal
-    # repo, branch = getarguments(sys.argv[1:])
     repo, branch = argument_parse(sys.argv[1:])
-    print("Repo from function: " + repo)
-    print("Branch from function: " + branch)
-
     print("Program started: " + loop_time)
     dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
     get_files()
     clone(repo, branch, dir_name)
-    # while True:  # Or while counter < given_number, to get finite number of loops
-    #     pull(dir_name)
-    #     job(dir_name)
+    while True:  # Or while counter < given_number, to get finite number of loops
+        pull(dir_name)
+        job(dir_name)
       # counter += 1
-
-    # print("Program exited.")
-
     # sys.stdout.close()  # Comment this, to enable live logging in terminal
     # exit()  # Uncomment, if using finite number of loops
