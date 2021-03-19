@@ -16,25 +16,26 @@ Discord bot integrated with simple python script which checks for new commits in
    ```
     python3 notify.py --help
     usage: python3 notify.py [--help] --repo <link_to_repository> [--branch <branch_to_be_observed>]
-
+    
     Repo_Discord_Notify tool - get pinged, whenever new commit appears!
     
     optional arguments:
       -h, --help                  show this help message and exit
       -r REPO, --repo REPO        repository link to cloned repo, with .git at the end
       -b BRANCH, --branch BRANCH  branch name, that will be cloned - default is master
-      --version                   show program's version number and exit
+      -t TIME, --time TIME        idle time between next pull&check - default is 10s
+      -v, --version               show program's version number and exit
     
     © 2021, wiktor.kobiela, Repo_Discord_Notify - feel free to contribute
    ```
 4. To start script, run in shell/screen:
    ```
-   python3 notify.py --repo <link_to_repo.git> --branch <branch_to_observe>
+   python3 notify.py --repo <link_to_repo.git> --branch <branch_to_observe> --time <idle_time>
    ```
    a. or other scheduler e.g. this one on Synology (it allows to run script at a given time, with preset number of loops in notify.py)
    ```
    cd /volume/path/to/script
-   python3 notify.py --repo <link_to_repo.git> --branch <branch_to_observe>
+   python3 notify.py --repo <link_to_repo.git> --branch <branch_to_observe> --time <idle_time>
    ```
 ### Script at the beginning will:
    * Check, if given repo link is correct. If no branch given, default is master
@@ -88,7 +89,6 @@ command = f'./discord.sh \
 More informations and source [HERE](https://github.com/ChaoticWeg/discord.sh#3-using-the-script).
 
 ### Additional setup:
-   * Interval of checking for new commits (default is 10s)
    * If script should run constantly, or make a few rounds (e.g. 120 loops, with interval of 1 minute, to check for new commits between 7am and 9am) 
    * Your Discord message, bot name, avatar etc.  
 
