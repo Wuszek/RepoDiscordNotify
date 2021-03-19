@@ -50,7 +50,7 @@ def pull(dir_name):
     return
 
 
-def job(dir_name):
+def job(dir_name, sleep_time):
     global latest_commit_hash
     count = 0
 
@@ -58,7 +58,7 @@ def job(dir_name):
         commit_name = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%s').read()
         commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
         commit_link = f"{repo[:-4]}/commit/"
-        sleep_time = 10  # Sleep timer in seconds. Change to customize repo refresh rate
+        # sleep_time = 10  # Sleep timer in seconds. Change to customize repo refresh rate
 
         if latest_commit_hash == commit_hash:
             print(f"No new updates. Sleeping for {sleep_time}s now.")
@@ -125,11 +125,11 @@ if __name__ == '__main__':
     print(f'Setup idle time: {sleep_time}')
     print("Program started: " + loop_time)
     dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
-    # get_files()
-    # clone(repo, branch, dir_name)
-    # while True:  # Or while counter < given_number, to get finite number of loops
-    #     pull(dir_name)
-    #     job(dir_name)
+    get_files()
+    clone(repo, branch, dir_name)
+    while True:  # Or while counter < given_number, to get finite number of loops
+        pull(dir_name)
+        job(dir_name, sleep_time)
       # counter += 1
     # sys.stdout.close()  # Comment this, to enable live logging in terminal
     # exit()  # Uncomment, if using finite number of loops
