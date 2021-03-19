@@ -8,7 +8,7 @@ import requests
 from datetime import datetime
 
 counter = 0  # Counter if you want to run script with finite number of loops. Leave it 0!
-
+latest_commit_hash = ""
 
 def get_files():
     if os.path.isfile('discord.sh'):
@@ -37,12 +37,10 @@ def clone(repo, branch, dir_name):
     else:
         os.popen('cd ../; git clone --single-branch --branch ' + branch + ' ' + repo).read()
 
-    # take second latest commit and create commit.txt file. Just to make sure, that script would catch next
+    # Take second latest commit hash and write it down. Just to make sure, that script would catch next
     # newer commit and send message using Discord bot
-    latest_commit_to_file = os.popen('cd ../' + dir_name + '; git log -1 --skip 1 --pretty=format:%s').read()
-    file = open("commit.txt", "w")
-    file.write(latest_commit_to_file)
-    file.close()
+    global latest_commit_hash
+    latest_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip 1 --pretty=format:%H').read()
     return
 
 
@@ -52,32 +50,25 @@ def pull(dir_name):
 
 
 def job(dir_name):
-    file = open("commit.txt", "r+")
-    previous_checked1 = file.read()
-    previous_checked = os.linesep.join([s for s in previous_checked1.splitlines() if s])
-
-    # time.sleep(1)
+    global latest_commit_hash
     count = 0
 
     while True:
-        output = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%s').read()
+        commit_name = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%s').read()
         commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
         commit_link = f"{repo[:-4]}/commit/"
         sleep_time = 10  # Sleep timer in seconds. Change to customize repo refresh rate
 
-        if previous_checked == output:
+        if latest_commit_hash == commit_hash:
             print(f"No new updates. Sleeping for {sleep_time}s now.")
-            latest_commit = os.popen('cd ../' + dir_name + '; git log -1 --pretty=format:%s').read()
-            file.seek(0)
-            file.truncate()
-            file.write(latest_commit)
-            file.close()
+            actual_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --pretty=format:%H').read()
+            latest_commit_hash = actual_commit_hash
             print("-----------------------------------------------")
             time.sleep(sleep_time)  # Set sleep time after no new commits found to ?seconds
             break
 
         else:
-            print("New commit! -> " + output)
+            print("New commit! -> " + commit_name)
             # EXAMPLE DISCORD BOT MESSAGE
             # command = f'./discord.sh \
             #             --username "NotificationBot" \
@@ -87,7 +78,7 @@ def job(dir_name):
             command = f'./discord.sh \
                         --username "OpenVisualCloud" \
                         --avatar "https://avatars3.githubusercontent.com/u/46843401?s=90&v=4" \
-                        --text "🐳 NEW COMMIT: **{output}** \\n path: <{commit_link}{commit_hash}>"'
+                        --text "🐳 NEW COMMIT: **{commit_name}** \\n path: <{commit_link}{commit_hash}>"'
 
             os.popen(command)
             count = count + 1  # to move to next new commit
