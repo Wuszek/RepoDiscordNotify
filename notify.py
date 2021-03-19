@@ -101,9 +101,9 @@ def argument_parse(argv):
         return arg_value
 
     parser.add_argument('-r', '--repo', action='store', dest="repo", help="repository link to cloned repo,\
-                        with .git at the end.", type=git_repo_regex, required=True)
-    parser.add_argument('-b', '--branch', action='store', dest="branch", help="branch name, that will be cloned. \
-                        Default is master.", default="master")
+                        with .git at the end", type=git_repo_regex, required=True)
+    parser.add_argument('-b', '--branch', action='store', dest="branch", help="branch name, that will be cloned - \
+                        default is master", default="master")
     parser.add_argument('--version', action='version', version='%(prog)s alpha')
 
     args = parser.parse_args()

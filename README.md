@@ -21,12 +21,11 @@ Discord bot integrated with simple python script which checks for new commits in
     
     optional arguments:
       -h, --help                  show this help message and exit
-      -r REPO, --repo REPO        repository link to cloned repo, with .git at the end.
-      -b BRANCH, --branch BRANCH  branch name, that will be cloned. Default is master.
+      -r REPO, --repo REPO        repository link to cloned repo, with .git at the end
+      -b BRANCH, --branch BRANCH  branch name, that will be cloned - default is master
       --version                   show program's version number and exit
     
     © 2021, wiktor.kobiela, Repo_Discord_Notify - feel free to contribute
-
    ```
 4. To start script, run in shell/screen:
    ```
@@ -44,9 +43,9 @@ Discord bot integrated with simple python script which checks for new commits in
       * If not, download repository
       * If yes but wrong branch, delete repo folder and download again with correct one
       * If yes, leave it alone
-   * Save ```last-1``` commit name in global variable
+   * Save ```last-1``` commit hash in global variable
       * It will send you notify about latest commit, just to check if bot works, then it will overrite variable 
-        with latest commit name 
+        with latest commit hash
    * Will generate commit link using repo path and commit hash  
    * Will save its logs to ```log.txt``` file, if said so
 
