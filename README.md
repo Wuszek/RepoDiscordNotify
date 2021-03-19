@@ -15,14 +15,18 @@ Discord bot integrated with simple python script which checks for new commits in
 3. Start script. You can check available option by:
    ```
     python3 notify.py --help
-   ====================================== DISPLAYING HELP ======================================
-   python3 notify.py --repo <link_to_repository> --branch <branch_to_be_observed>
-   --repo: Link to cloned repo, with .git at the end.
-   --branch: Branch name, that will be cloned. Default is master.
-   In code: setup sleep timer and Discord Bot message.
-   e.g. of usage:
-   python3 notify.py --repo https://github.com/OpenVisualCloud/Dockerfiles.git --branch v21.3
-   =============================================================================================
+    usage: python3 notify.py [--help] --repo <link_to_repository> [--branch <branch_to_be_observed>]
+
+    Repo_Discord_Notify tool - get pinged, whenever new commit appears!
+    
+    optional arguments:
+      -h, --help                  show this help message and exit
+      -r REPO, --repo REPO        repository link to cloned repo, with .git at the end.
+      -b BRANCH, --branch BRANCH  branch name, that will be cloned. Default is master.
+      --version                   show program's version number and exit
+    
+    © 2021, wiktor.kobiela, Repo_Discord_Notify - feel free to contribute
+
    ```
 4. To start script, run in shell/screen:
    ```
@@ -40,11 +44,11 @@ Discord bot integrated with simple python script which checks for new commits in
       * If not, download repository
       * If yes but wrong branch, delete repo folder and download again with correct one
       * If yes, leave it alone
-   * Create file ```commit.txt```, save there ```last-1``` commit name
-      * It will send you notify about latest commit, just to check if bot works, then it will overrite ```commit.txt``` 
+   * Save ```last-1``` commit name in global variable
+      * It will send you notify about latest commit, just to check if bot works, then it will overrite variable 
         with latest commit name 
    * Will generate commit link using repo path and commit hash  
-   * Will save its logs to ```log.txt``` file
+   * Will save its logs to ```log.txt``` file, if said so
 
 ### Sample discord message
 
