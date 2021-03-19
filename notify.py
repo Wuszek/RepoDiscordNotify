@@ -104,16 +104,19 @@ def argument_parse(argv):
                         with .git at the end", type=git_repo_regex, required=True)
     parser.add_argument('-b', '--branch', action='store', dest="branch", help="branch name, that will be cloned - \
                         default is master", default="master")
-    parser.add_argument('--version', action='version', version='%(prog)s alpha')
+    parser.add_argument('-t', '--time', action='store', dest="time", help="idle time between next pull&check - default \
+                        is 10s", type=int, default=10)
+    parser.add_argument('-v', '--version', action='version', version='%(prog)s alpha')
 
     args = parser.parse_args()
-    return args.repo, args.branch
+    return args.repo, args.branch, args.time
 
 
 if __name__ == '__main__':
     loop_time = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
     # sys.stdout = open('log.txt', 'a+')  # Comment this, to enable live logging in terminal
-    repo, branch = argument_parse(sys.argv[1:])
+    repo, branch, sleep_time = argument_parse(sys.argv[1:])
+    print(f'Setup idle time {sleep_time}')
     print("Program started: " + loop_time)
     dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
     get_files()
