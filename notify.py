@@ -41,7 +41,7 @@ def clone(repo, branch, dir_name):
     # newer commit and send message using Discord bot
     global latest_commit_hash
     latest_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip 1 --pretty=format:%H').read()
-    print(f'Latest commit hash: {latest_commit_hash}')
+    print(f'Latest-1 commit hash from clone: {latest_commit_hash}')
     # file = open("commit.txt", "w")
     # file.write(latest_commit_to_file)
     # file.close()
@@ -54,32 +54,34 @@ def pull(dir_name):
 
 
 def job(dir_name):
-    file = open("commit.txt", "r+")
-    previous_checked1 = file.read()
-    previous_checked = os.linesep.join([s for s in previous_checked1.splitlines() if s])
-
-    # time.sleep(1)
+    # file = open("commit.txt", "r+")
+    # previous_checked1 = file.read()
+    # previous_checked = os.linesep.join([s for s in previous_checked1.splitlines() if s])
+    global latest_commit_hash
     count = 0
 
     while True:
-        output = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%s').read()
+        commit_name = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%s').read()
         commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
         commit_link = f"{repo[:-4]}/commit/"
         sleep_time = 10  # Sleep timer in seconds. Change to customize repo refresh rate
 
-        if previous_checked == output:
+        if latest_commit_hash == commit_hash:
             print(f"No new updates. Sleeping for {sleep_time}s now.")
-            latest_commit = os.popen('cd ../' + dir_name + '; git log -1 --pretty=format:%s').read()
-            file.seek(0)
-            file.truncate()
-            file.write(latest_commit)
-            file.close()
+            latest_commit = os.popen('cd ../' + dir_name + '; git log -1 --pretty=format:%H').read()
+            latest_commit_hash = latest_commit
+            print(f'Latest commit hash from loop: {latest_commit_hash} and checked rn checked {commit_hash}')
+            # file.seek(0)
+            # file.truncate()
+            # file.write(latest_commit)
+            # file.close()
             print("-----------------------------------------------")
             time.sleep(sleep_time)  # Set sleep time after no new commits found to ?seconds
             break
 
         else:
-            print("New commit! -> " + output)
+            print("New commit! -> " + commit_name)
+            print(f'Commit hash {commit_hash} and latest commit hash {latest_commit_hash}')
             # EXAMPLE DISCORD BOT MESSAGE
             # command = f'./discord.sh \
             #             --username "NotificationBot" \
@@ -89,7 +91,7 @@ def job(dir_name):
             command = f'./discord.sh \
                         --username "OpenVisualCloud" \
                         --avatar "https://avatars3.githubusercontent.com/u/46843401?s=90&v=4" \
-                        --text "🐳 NEW COMMIT: **{output}** \\n path: <{commit_link}{commit_hash}>"'
+                        --text "🐳 NEW COMMIT: **{commit_name}** \\n path: <{commit_link}{commit_hash}>"'
 
             os.popen(command)
             count = count + 1  # to move to next new commit
@@ -151,9 +153,9 @@ if __name__ == '__main__':
     dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
     get_files()
     clone(repo, branch, dir_name)
-    # while True:  # Or while counter < given_number, to get finite number of loops
-    #     pull(dir_name)
-    #     job(dir_name)
+    while True:  # Or while counter < given_number, to get finite number of loops
+        pull(dir_name)
+        job(dir_name)
       # counter += 1
 
     print("Program exited.")
