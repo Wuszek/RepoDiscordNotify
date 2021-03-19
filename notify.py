@@ -37,14 +37,10 @@ def clone(repo, branch, dir_name):
     else:
         os.popen('cd ../; git clone --single-branch --branch ' + branch + ' ' + repo).read()
 
-    # take second latest commit and create commit.txt file. Just to make sure, that script would catch next
+    # Take second latest commit hash and write it down. Just to make sure, that script would catch next
     # newer commit and send message using Discord bot
     global latest_commit_hash
     latest_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip 1 --pretty=format:%H').read()
-    print(f'Latest-1 commit hash from clone: {latest_commit_hash}')
-    # file = open("commit.txt", "w")
-    # file.write(latest_commit_to_file)
-    # file.close()
     return
 
 
@@ -54,9 +50,6 @@ def pull(dir_name):
 
 
 def job(dir_name):
-    # file = open("commit.txt", "r+")
-    # previous_checked1 = file.read()
-    # previous_checked = os.linesep.join([s for s in previous_checked1.splitlines() if s])
     global latest_commit_hash
     count = 0
 
@@ -68,20 +61,14 @@ def job(dir_name):
 
         if latest_commit_hash == commit_hash:
             print(f"No new updates. Sleeping for {sleep_time}s now.")
-            latest_commit = os.popen('cd ../' + dir_name + '; git log -1 --pretty=format:%H').read()
-            latest_commit_hash = latest_commit
-            print(f'Latest commit hash from loop: {latest_commit_hash} and checked rn checked {commit_hash}')
-            # file.seek(0)
-            # file.truncate()
-            # file.write(latest_commit)
-            # file.close()
+            actual_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --pretty=format:%H').read()
+            latest_commit_hash = actual_commit_hash
             print("-----------------------------------------------")
             time.sleep(sleep_time)  # Set sleep time after no new commits found to ?seconds
             break
 
         else:
             print("New commit! -> " + commit_name)
-            print(f'Commit hash {commit_hash} and latest commit hash {latest_commit_hash}')
             # EXAMPLE DISCORD BOT MESSAGE
             # command = f'./discord.sh \
             #             --username "NotificationBot" \
