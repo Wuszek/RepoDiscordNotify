@@ -5,6 +5,7 @@ import sys
 import getopt
 import re
 import requests
+import argparse
 from datetime import datetime
 
 counter = 0  # Counter if you want to run script with finite number of loops. Leave it 0!
@@ -98,6 +99,30 @@ def usage():
     sys.exit()
 
 
+def argument_parse(argv):
+    parser = argparse.ArgumentParser(description="Repo_discord_notifier", add_help=False)
+    #repo = None
+
+    parser.add_argument('-r', '--repo', action='store', dest="repo", help="Repository link", required=True)
+    parser.add_argument('-b', '--branch', action='store', dest="branch", help="Branch", default="master")
+    # parser.add_argument('-h', '--help')
+
+    args = parser.parse_args(args=None if sys.argv[1:] else ['--help'])
+
+    if args.repo:
+        print("Repo given")
+        repo = args.repo
+
+    if args.branch:
+        print("Branch given")
+        branch = args.branch
+
+    if args.help:
+        usage()
+
+    return repo, branch
+
+
 def getarguments(argv):
     global opts
     repo = None
@@ -135,17 +160,21 @@ def getarguments(argv):
 if __name__ == '__main__':
     loop_time = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
     # sys.stdout = open('log.txt', 'a+')  # Comment this, to enable live logging in terminal
-    repo, branch = getarguments(sys.argv[1:])
-    print("Program started: " + loop_time)
-    dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
-    get_files()
-    clone(repo, branch, dir_name)
-    while True:  # Or while counter < given_number, to get finite number of loops
-        pull(dir_name)
-        job(dir_name)
+    # repo, branch = getarguments(sys.argv[1:])
+    repo, branch = argument_parse(sys.argv[1:])
+    print("Repo from function: " + repo)
+    print("Branch from function: " + branch)
+
+    # print("Program started: " + loop_time)
+    # dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
+    # get_files()
+    # clone(repo, branch, dir_name)
+    # while True:  # Or while counter < given_number, to get finite number of loops
+    #     pull(dir_name)
+    #     job(dir_name)
       # counter += 1
 
-    print("Program exited.")
+    # print("Program exited.")
 
     # sys.stdout.close()  # Comment this, to enable live logging in terminal
     # exit()  # Uncomment, if using finite number of loops
