@@ -21,6 +21,10 @@ def get_files():
         open(filename, 'wb').write(f.content)
         os.popen('chmod +x discord.sh').read()
         print("File 'discord.sh' downloaded. Proceeding...")
+    if os.path.isfile('.webhook'):
+        print(".webhook file fund! Proceeding...")
+    else:
+        exit("No .webhook file. Create one with webhook url inside.")
     return
 
 
