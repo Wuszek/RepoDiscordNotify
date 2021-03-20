@@ -11,7 +11,7 @@ Discord bot integrated with simple python script which checks for new commits in
    ```
    git clone https://git.kobiela.click/wiktor.kobiela/Repo_discord_notifier.git
    ```
-2. Create file .webhook with your channel webhook link inside
+2. Create a file ```.webhook``` with your channel webhook link inside
 3. Start script. You can check available option by:
    ```
     python3 notify.py --help
@@ -40,7 +40,7 @@ Discord bot integrated with simple python script which checks for new commits in
    e.g:
    python3 notify.py --repo https://git.kobiela.click/wiktor.kobiela/Test.git --branch master --time 100
    ```
-   a. or other scheduler e.g. this one on Synology (it allows to run script at a given time, with preset number of loops in notify.py)
+   a. or other scheduler e.g. this one on Synology (it allows running script at a given time, with preset number of loops in notify.py)
    ```
    cd /volume/path/to/script
    python3 notify.py --repo <link_to_repo.git> --branch <branch_to_observe> --time <idle_time>
@@ -55,8 +55,8 @@ Discord bot integrated with simple python script which checks for new commits in
       * If yes but wrong branch, delete repo folder and download again with correct one
       * If yes, leave it alone
    * Save ```last-1``` commit hash in global variable
-      * It will send you notify about latest commit, just to check if bot works, then it will overrite variable 
-        with latest commit hash
+      * It will send you notify about the latest commit, just to check if bot works, then it will override variable 
+        with the latest commit hash
    * Will generate commit link using repo path and commit hash  
    * Will save its logs to ```log.txt``` file, if said so
 
@@ -96,7 +96,7 @@ command = f'./discord.sh \
   --timestamp
   ```
 
-More informations and source [HERE](https://github.com/ChaoticWeg/discord.sh#3-using-the-script).
+More information and source [HERE](https://github.com/ChaoticWeg/discord.sh#3-using-the-script).
 
 ### Additional setup
    * If script should run constantly, or make a few rounds (e.g. 120 loops, with interval of 1 minute, to check for new commits between 7am and 9am) 
@@ -107,4 +107,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ### Licence
 
-[MIT Licence](https://opensource.org/licenses/MIT)
+[GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html)
