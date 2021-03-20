@@ -28,7 +28,7 @@ def clone(repo, branch, dir_name):
 
     if not os.popen(f'git ls-remote --heads {repo} {branch}').read():
         exit("Given branch does not exist in remote.")
-    print("Valid git repository url. Proceeding...")
+    print("Valid repository url. Proceeding...")
     if os.path.isdir('../' + dir_name):
         actual_branch = os.popen('cd ../' + dir_name + '; git branch').read()[2:]
         filtered_branch = os.linesep.join([s for s in actual_branch.splitlines() if s])
@@ -94,14 +94,14 @@ def job(dir_name, sleep_time):
 def argument_parse(argv):
     print("\n→ " + datetime.now().strftime("%d/%m/%Y, %H:%M:%S"))
     parser = argparse.ArgumentParser\
-    (usage="python3 notify.py [--help] --repo <link_to_repository> [--branch <branch_to_be_observed>]", \
+    (usage="python3 notify.py [--help] --repo <url.git> [--branch <branch>] [--time <sec>]", \
     description="Repo_Discord_Notify tool - get pinged, whenever new commit appears!", \
     epilog="© 2021, wiktor.kobiela, Repo_Discord_Notify - feel free to contribute", prog="Repo_Discord_Notify", \
     add_help=True, formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=120, width=250))
 
     def git_repo_regex(arg_value, pat=re.compile(r"^(([A-Za-z0-9]+@|http(|s)\:\/\/)|(http(|s)\:\/\/[A-Za-z0-9]+@))([A-Za-z0-9.]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git){1}$")):
         if not pat.match(arg_value):
-            raise argparse.ArgumentTypeError("Invalid repository link.")
+            raise argparse.ArgumentTypeError("Invalid repository url.")
         return arg_value
 
     def positive_int(value):
@@ -110,13 +110,15 @@ def argument_parse(argv):
             raise argparse.ArgumentTypeError("%s is an invalid positive int value." % value)
         return ivalue
 
-    parser.add_argument('-r', '--repo', action='store', dest="repo", help="repository link to cloned repo,\
+    requiredNamed = parser.add_argument_group('required named arguments')
+    optionalNamed = parser.add_argument_group('optional arguments')
+    requiredNamed.add_argument('-r', '--repo', action='store', dest="repo", help="repository link to cloned repo,\
                         with .git at the end", type=git_repo_regex, required=True)
-    parser.add_argument('-b', '--branch', action='store', dest="branch", help="branch name, that will be cloned - \
+    optionalNamed.add_argument('-b', '--branch', action='store', dest="branch", help="branch name, that will be cloned - \
                         default is master", default="master")
-    parser.add_argument('-t', '--time', action='store', dest="time", help="idle time between next pull&check - default \
+    optionalNamed.add_argument('-t', '--time', action='store', dest="time", help="idle time between next pull&check - default \
                         is 10s", type=positive_int, default=10)
-    parser.add_argument('-v', '--version', action='version', version='%(prog)s alpha')
+    optionalNamed.add_argument('-v', '--version', action='version', version='%(prog)s alpha')
 
     args = parser.parse_args()
     return args.repo, args.branch, args.time
