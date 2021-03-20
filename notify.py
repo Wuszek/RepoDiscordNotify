@@ -66,42 +66,40 @@ def job(dir_name, sleep_time):
         commit_name = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%s').read()
         commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
         commit_link = f"{repo[:-4]}/commit/"
-        # sleep_time = 10  # Sleep timer in seconds. Change to customize repo refresh rate
 
         if latest_commit_hash == commit_hash:
             print(f"No new updates. Sleeping for {sleep_time}s now.")
             actual_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --pretty=format:%H').read()
             latest_commit_hash = actual_commit_hash
             print("-----------------------------------------------")
-            time.sleep(sleep_time)  # Set sleep time after no new commits found to ?seconds
+            time.sleep(sleep_time)  # Set sleep time if no new commits found
             break
 
         else:
             print("New commit! -> " + commit_name)
             # EXAMPLE DISCORD BOT MESSAGE
-            # command = f'./discord.sh \
-            #             --username "NotificationBot" \
-            #             --avatar "https://i.imgur.com/12jyR5Q.png" \
-            #             --text "Commit appear!: **{commit_name}** \\n path: <{commit_link}{commit_hash}>"'
-            # DOCKERFILES DISCORD BOT MESSAGE
             command = f'./discord.sh \
-                        --username "OpenVisualCloud" \
-                        --avatar "https://avatars3.githubusercontent.com/u/46843401?s=90&v=4" \
-                        --text "🐳 NEW COMMIT: **{commit_name}** \\n path: <{commit_link}{commit_hash}>"'
+                        --username "NotificationBot" \
+                        --avatar "https://i.imgur.com/12jyR5Q.png" \
+                        --text "Commit appear: **{commit_name}** \\n path: <{commit_link}{commit_hash}>"'
+            # DOCKERFILES DISCORD BOT MESSAGE
+            # command = f'./discord.sh \
+            #             --username "OpenVisualCloud" \
+            #             --avatar "https://avatars3.githubusercontent.com/u/46843401?s=90&v=4" \
+            #             --text "🐳 NEW COMMIT: **{commit_name}** \\n path: <{commit_link}{commit_hash}>"'
 
             os.popen(command)
             count = count + 1  # to move to next new commit
-            # time.sleep(1)
             print("-----------------------------------------------")
 
 
 def argument_parse(argv):
     print("\n→ " + datetime.now().strftime("%d/%m/%Y, %H:%M:%S"))
     parser = argparse.ArgumentParser\
-    (usage="python3 notify.py [--help] --repo <url.git> [--branch <branch>] [--time <sec>]", \
+    (usage="python3 notify.py [--help] --repo <link> [--branch <branch>] [--time <sec>]", \
     description="Repo_Discord_Notify tool - get pinged, whenever new commit appears!", \
     epilog="© 2021, wiktor.kobiela, Repo_Discord_Notify - feel free to contribute", prog="Repo_Discord_Notify", \
-    add_help=True, formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=120, width=250))
+    add_help=False, formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=120, width=250))
 
     def git_repo_regex(arg_value, pat=re.compile(r"^(([A-Za-z0-9]+@|http(|s)\:\/\/)|(http(|s)\:\/\/[A-Za-z0-9]+@))([A-Za-z0-9.]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git){1}$")):
         if not pat.match(arg_value):
@@ -114,13 +112,19 @@ def argument_parse(argv):
             raise argparse.ArgumentTypeError("%s is an invalid positive int value." % value)
         return ivalue
 
-    parser.add_argument('-r', '--repo', action='store', dest="repo", help="repository link to cloned repo,\
-                        with .git at the end", type=git_repo_regex, required=True)
-    parser.add_argument('-b', '--branch', action='store', dest="branch", help="branch name, that will be cloned - \
-                        default is master", default="master")
-    parser.add_argument('-t', '--time', action='store', dest="time", help="idle time between next pull&check - default \
-                        is 10s", type=positive_int, default=10)
-    parser.add_argument('-v', '--version', action='version', version='%(prog)s alpha')
+    required = parser.add_argument_group('required arguments')
+    optional = parser.add_argument_group('optional arguments')
+    helpful = parser.add_argument_group('helpful arguments')
+
+    required.add_argument('-r', '--repo', action='store', dest="repo", help="repository link to cloned repo,\
+                        with .git at the end", type=git_repo_regex, required=True, metavar="<link>")
+    optional.add_argument('-b', '--branch', action='store', dest="branch", help="branch name, that will be cloned - \
+                        default is master", default="master", metavar="<name>")
+    optional.add_argument('-t', '--time', action='store', dest="time", help="idle time between next pull&check - default \
+                        is 10s", type=positive_int, default=10, metavar="<time>")
+    helpful.add_argument('-v', '--version', action='version', version='%(prog)s alpha 21.3')
+
+    helpful.add_argument('-h', '--help', action='help', help='show this help message and exit')
 
     args = parser.parse_args()
     return args.repo, args.branch, args.time

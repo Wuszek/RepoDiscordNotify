@@ -4,67 +4,77 @@ Discord bot integrated with simple python script which checks for new commits in
 
 ### Built With
    - [discord.sh](https://github.com/ChaoticWeg/discord.sh) - bash integration for Discord webhooks
-   - python 
+   - python3
 
 ### How to use
 1. Clone repository
    ```
    git clone https://git.kobiela.click/wiktor.kobiela/Repo_discord_notifier.git
    ```
-2. Create file .webhook with your channel webhook link inside
+2. Create a file ```.webhook``` with your channel webhook link inside
 3. Start script. You can check available option by:
    ```
     python3 notify.py --help
-    usage: python3 notify.py [--help] --repo <link_to_repository> [--branch <branch_to_be_observed>]
+
+    → 20/03/2021, 18:01:29
+    usage: python3 notify.py [--help] --repo <link> [--branch <branch>] [--time <sec>]
     
     Repo_Discord_Notify tool - get pinged, whenever new commit appears!
     
+    required arguments:
+      -r <link>, --repo <link>    repository link to cloned repo, with .git at the end
+    
     optional arguments:
-      -h, --help                  show this help message and exit
-      -r REPO, --repo REPO        repository link to cloned repo, with .git at the end
-      -b BRANCH, --branch BRANCH  branch name, that will be cloned - default is master
-      -t TIME, --time TIME        idle time between next pull&check - default is 10s
+      -b <name>, --branch <name>  branch name, that will be cloned - default is master
+      -t <time>, --time <time>    idle time between next pull&check - default is 10s
+    
+    helpful arguments:
       -v, --version               show program's version number and exit
+      -h, --help                  show this help message and exit
     
     © 2021, wiktor.kobiela, Repo_Discord_Notify - feel free to contribute
    ```
 4. To start script, run in shell/screen:
    ```
    python3 notify.py --repo <link_to_repo.git> --branch <branch_to_observe> --time <idle_time>
+   e.g:
+   python3 notify.py --repo https://git.kobiela.click/wiktor.kobiela/Test.git --branch master --time 100
    ```
-   a. or other scheduler e.g. this one on Synology (it allows to run script at a given time, with preset number of loops in notify.py)
+   a. or other scheduler e.g. this one on Synology (it allows running script at a given time, with preset number of loops in notify.py)
    ```
    cd /volume/path/to/script
    python3 notify.py --repo <link_to_repo.git> --branch <branch_to_observe> --time <idle_time>
    ```
 ### Script at the beginning will:
-   * Check, if given repo link is correct. If no branch given, default is master
-   * Download discord.sh script and make it executable
+   * Check, if given repo link is correct. 
+   * Check, if given branch actually exists on remote, default is 'master'  
+   * Check if discord.sh script exists, if no download and make it executable  
+      * Check for .webhook file
    * Check, if given repository is on disk in ```cd ../```
       * If not, download repository
       * If yes but wrong branch, delete repo folder and download again with correct one
       * If yes, leave it alone
    * Save ```last-1``` commit hash in global variable
-      * It will send you notify about latest commit, just to check if bot works, then it will overrite variable 
-        with latest commit hash
+      * It will send you notify about the latest commit, just to check if bot works, then it will override variable 
+        with the latest commit hash
    * Will generate commit link using repo path and commit hash  
    * Will save its logs to ```log.txt``` file, if said so
 
 ### Sample discord message
 
-#### Code:
+#### Code
 
 ```
 command = f'./discord.sh \
-          --username "OpenVisualCloud" \
-          --avatar "https://avatars3.githubusercontent.com/u/46843401?s=90&v=4" \
-          --text "🐳 NEW COMMIT: **{output}** \\n path: <{commit_link}{commit_hash}>"'
+          --username "NotificationBot" \
+          --avatar "https://i.imgur.com/12jyR5Q.png" \
+          --text "Commit appear: **{commit_name}** \\n path: <{commit_link}{commit_hash}>"'
 ```
-#### Looks:
+#### Looks
 
-![alt text](https://i.imgur.com/Fs7P5V9.png)
+![alt text](https://i.imgur.com/mFnKPBW.png)
 
-#### How to create more complex messages:
+#### How to create more complex messages
 
 ```
 ./discord.sh \
@@ -86,9 +96,15 @@ command = f'./discord.sh \
   --timestamp
   ```
 
-More informations and source [HERE](https://github.com/ChaoticWeg/discord.sh#3-using-the-script).
+More information and source [HERE](https://github.com/ChaoticWeg/discord.sh#3-using-the-script).
 
-### Additional setup:
+### Additional setup
    * If script should run constantly, or make a few rounds (e.g. 120 loops, with interval of 1 minute, to check for new commits between 7am and 9am) 
    * Your Discord message, bot name, avatar etc.  
 
+### Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+### Licence
+
+[GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html)
