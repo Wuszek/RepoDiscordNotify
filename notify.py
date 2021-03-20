@@ -110,15 +110,13 @@ def argument_parse(argv):
             raise argparse.ArgumentTypeError("%s is an invalid positive int value." % value)
         return ivalue
 
-    requiredNamed = parser.add_argument_group('required named arguments')
-    optionalNamed = parser.add_argument_group('optional arguments')
-    requiredNamed.add_argument('-r', '--repo', action='store', dest="repo", help="repository link to cloned repo,\
+    parser.add_argument('-r', '--repo', action='store', dest="repo", help="repository link to cloned repo,\
                         with .git at the end", type=git_repo_regex, required=True)
-    optionalNamed.add_argument('-b', '--branch', action='store', dest="branch", help="branch name, that will be cloned - \
+    parser.add_argument('-b', '--branch', action='store', dest="branch", help="branch name, that will be cloned - \
                         default is master", default="master")
-    optionalNamed.add_argument('-t', '--time', action='store', dest="time", help="idle time between next pull&check - default \
+    parser.add_argument('-t', '--time', action='store', dest="time", help="idle time between next pull&check - default \
                         is 10s", type=positive_int, default=10)
-    optionalNamed.add_argument('-v', '--version', action='version', version='%(prog)s alpha')
+    parser.add_argument('-v', '--version', action='version', version='%(prog)s alpha')
 
     args = parser.parse_args()
     return args.repo, args.branch, args.time
@@ -130,13 +128,12 @@ if __name__ == '__main__':
     print('-----------------------Settings--------------------------')
     print(f'Repo: {repo}\nBranch: {branch}\nIdle time: {sleep_time}')
     print('---------------------------------------------------------')
-    # print("Program started: " + datetime.now().strftime("%d/%m/%Y, %H:%M:%S"))
     dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
     get_files()
     clone(repo, branch, dir_name)
-    # while True:  # Or while counter < given_number, to get finite number of loops
-    #     pull(dir_name)
-    #     job(dir_name, sleep_time)
+    while True:  # Or while counter < given_number, to get finite number of loops
+        pull(dir_name)
+        job(dir_name, sleep_time)
       # counter += 1
     # sys.stdout.close()  # Comment this, to enable live logging in terminal
     # exit()  # Uncomment, if using finite number of loops
