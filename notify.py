@@ -29,6 +29,10 @@ def get_files():
 
 
 def clone(repo, branch, dir_name):
+
+    if not os.popen(f'git ls-remote --heads {repo} {branch}').read():
+        exit("Given branch does not exist in remote.")
+    print("Valid repository url. Proceeding...")
     if os.path.isdir('../' + dir_name):
         actual_branch = os.popen('cd ../' + dir_name + '; git branch').read()[2:]
         filtered_branch = os.linesep.join([s for s in actual_branch.splitlines() if s])
@@ -78,7 +82,7 @@ def job(dir_name, sleep_time):
             # command = f'./discord.sh \
             #             --username "NotificationBot" \
             #             --avatar "https://i.imgur.com/12jyR5Q.png" \
-            #             --text "Hello, world!"'
+            #             --text "Commit appear!: **{commit_name}** \\n path: <{commit_link}{commit_hash}>"'
             # DOCKERFILES DISCORD BOT MESSAGE
             command = f'./discord.sh \
                         --username "OpenVisualCloud" \
@@ -92,16 +96,16 @@ def job(dir_name, sleep_time):
 
 
 def argument_parse(argv):
+    print("\n→ " + datetime.now().strftime("%d/%m/%Y, %H:%M:%S"))
     parser = argparse.ArgumentParser\
-    (usage="python3 notify.py [--help] --repo <link_to_repository> [--branch <branch_to_be_observed>]", \
+    (usage="python3 notify.py [--help] --repo <url.git> [--branch <branch>] [--time <sec>]", \
     description="Repo_Discord_Notify tool - get pinged, whenever new commit appears!", \
     epilog="© 2021, wiktor.kobiela, Repo_Discord_Notify - feel free to contribute", prog="Repo_Discord_Notify", \
-    add_help=True, formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=100, width=250))
+    add_help=True, formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=120, width=250))
 
     def git_repo_regex(arg_value, pat=re.compile(r"^(([A-Za-z0-9]+@|http(|s)\:\/\/)|(http(|s)\:\/\/[A-Za-z0-9]+@))([A-Za-z0-9.]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git){1}$")):
         if not pat.match(arg_value):
-            raise argparse.ArgumentTypeError("Invalid repository link.")
-        print("Valid git repository url. Proceeding...")
+            raise argparse.ArgumentTypeError("Invalid repository url.")
         return arg_value
 
     def positive_int(value):
@@ -123,11 +127,11 @@ def argument_parse(argv):
 
 
 if __name__ == '__main__':
-    loop_time = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
     # sys.stdout = open('log.txt', 'a+')  # Comment this, to enable live logging in terminal
     repo, branch, sleep_time = argument_parse(sys.argv[1:])
-    print(f'Setup idle time: {sleep_time}')
-    print("Program started: " + loop_time)
+    print('-----------------------Settings--------------------------')
+    print(f'Repo: {repo}\nBranch: {branch}\nIdle time: {sleep_time}')
+    print('---------------------------------------------------------')
     dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
     get_files()
     clone(repo, branch, dir_name)
