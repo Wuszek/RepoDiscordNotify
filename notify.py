@@ -101,7 +101,7 @@ def argument_parse(argv):
     (usage="python3 notify.py [--help] --repo <url.git> [--branch <branch>] [--time <sec>]", \
     description="Repo_Discord_Notify tool - get pinged, whenever new commit appears!", \
     epilog="© 2021, wiktor.kobiela, Repo_Discord_Notify - feel free to contribute", prog="Repo_Discord_Notify", \
-    add_help=True, formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=120, width=250))
+    add_help=False, formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=120, width=250))
 
     def git_repo_regex(arg_value, pat=re.compile(r"^(([A-Za-z0-9]+@|http(|s)\:\/\/)|(http(|s)\:\/\/[A-Za-z0-9]+@))([A-Za-z0-9.]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git){1}$")):
         if not pat.match(arg_value):
@@ -114,13 +114,19 @@ def argument_parse(argv):
             raise argparse.ArgumentTypeError("%s is an invalid positive int value." % value)
         return ivalue
 
-    parser.add_argument('-r', '--repo', action='store', dest="repo", help="repository link to cloned repo,\
-                        with .git at the end", type=git_repo_regex, required=True)
-    parser.add_argument('-b', '--branch', action='store', dest="branch", help="branch name, that will be cloned - \
-                        default is master", default="master")
-    parser.add_argument('-t', '--time', action='store', dest="time", help="idle time between next pull&check - default \
-                        is 10s", type=positive_int, default=10)
-    parser.add_argument('-v', '--version', action='version', version='%(prog)s alpha')
+    required = parser.add_argument_group('required arguments')
+    optional = parser.add_argument_group('optional arguments')
+    helpful = parser.add_argument_group('helpful arguments')
+
+    required.add_argument('-r', '--repo', action='store', dest="repo", help="repository link to cloned repo,\
+                        with .git at the end", type=git_repo_regex, required=True, metavar="<link>")
+    optional.add_argument('-b', '--branch', action='store', dest="branch", help="branch name, that will be cloned - \
+                        default is master", default="master", metavar="<name>")
+    optional.add_argument('-t', '--time', action='store', dest="time", help="idle time between next pull&check - default \
+                        is 10s", type=positive_int, default=10, metavar="<time>")
+    helpful.add_argument('-v', '--version', action='version', version='%(prog)s alpha 21.3')
+
+    helpful.add_argument('-h', '--help', action='help', help='show this help message and exit')
 
     args = parser.parse_args()
     return args.repo, args.branch, args.time
