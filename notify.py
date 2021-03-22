@@ -118,12 +118,15 @@ def argument_parse(argv):
 
     required.add_argument('-r', '--repo', action='store', dest="repo", help="repository link to cloned repo,\
                         with .git at the end", type=git_repo_regex, required=True, metavar="<link>")
+
     optional.add_argument('-b', '--branch', action='store', dest="branch", help="branch name, that will be cloned - \
                         default is master", default="master", metavar="<name>")
-    optional.add_argument('-t', '--time', action='store', dest="time", help="idle time between next pull&check - default \
-                        is 10s", type=positive_int, default=10, metavar="<time>")
-    helpful.add_argument('-v', '--version', action='version', version='%(prog)s alpha 21.3')
+    optional.add_argument('-t', '--time', action='store', dest="time", help="idle time between next pull&check - \
+                          default is 10s", type=positive_int, default=10, metavar="<time>")
+    optional.add_argument('-l', '--loop', action='store', dest="loop", help="number of loops that script should make - \
+                          default is infinite", type=positive_int, metavar="<time>")
 
+    helpful.add_argument('-v', '--version', action='version', version='%(prog)s alpha 21.3')
     helpful.add_argument('-h', '--help', action='help', help='show this help message and exit')
 
     args = parser.parse_args()

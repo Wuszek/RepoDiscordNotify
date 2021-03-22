@@ -9,7 +9,7 @@ Discord bot integrated with simple python script which checks for new commits in
 ### How to use
 1. Clone repository
    ```
-   git clone https://git.kobiela.click/wiktor.kobiela/Repo_discord_notifier.git
+   git clone https://git.kobiela.click/wiktor.kobiela/Repo_Discord_Notify.git
    ```
 2. Create a file ```.webhook``` with your channel webhook link inside
 3. Start script. You can check available option by:
