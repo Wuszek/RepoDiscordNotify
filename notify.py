@@ -124,27 +124,40 @@ def argument_parse(argv):
     optional.add_argument('-t', '--time', action='store', dest="time", help="idle time between next pull&check - \
                           default is 10s", type=positive_int, default=10, metavar="<time>")
     optional.add_argument('-l', '--loop', action='store', dest="loop", help="number of loops that script should make - \
-                          default is infinite", type=positive_int, metavar="<time>")
+                          default is infinite (0)", default=0, type=positive_int, metavar="<quan>")
 
     helpful.add_argument('-v', '--version', action='version', version='%(prog)s alpha 21.3')
     helpful.add_argument('-h', '--help', action='help', help='show this help message and exit')
 
     args = parser.parse_args()
-    return args.repo, args.branch, args.time
+    return args.repo, args.branch, args.time, args.loop
+
+
+def looping(loop, counter):
+    if loop == 0:
+        print(f'Looping forever.')
+        while True:
+            pull(dir_name)
+            job(dir_name, sleep_time)
+        print("x")
+    else:
+        print(f'Looping {loop} times.')
+        while counter < loop:
+            pull(dir_name)
+            job(dir_name, sleep_time)
+            counter += 1
+    return
 
 
 if __name__ == '__main__':
     # sys.stdout = open('log.txt', 'a+')  # Comment this, to enable live logging in terminal
-    repo, branch, sleep_time = argument_parse(sys.argv[1:])
+    repo, branch, sleep_time, loop = argument_parse(sys.argv[1:])
     print('-----------------------Settings--------------------------')
-    print(f'Repo: {repo}\nBranch: {branch}\nIdle time: {sleep_time}')
+    print(f'Repo: {repo}\nBranch: {branch}\nIdle time: {sleep_time}\nLoops: {loop}')
     print('---------------------------------------------------------')
     dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
     get_files()
     clone(repo, branch, dir_name)
-    while True:  # Or while counter < given_number, to get finite number of loops
-        pull(dir_name)
-        job(dir_name, sleep_time)
-      # counter += 1
+    looping(loop, counter)
     # sys.stdout.close()  # Comment this, to enable live logging in terminal
-    # exit()  # Uncomment, if using finite number of loops
+    exit("Finished my job. Bye")
