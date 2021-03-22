@@ -11,6 +11,7 @@ import requests
 counter = 0  # Counter if you want to run script with finite number of loops. Leave it 0!
 latest_commit_hash = ""
 
+
 def get_files():
     if os.path.isfile('discord.sh'):
         print("File 'discord.sh' already exists. Proceeding...")
@@ -39,12 +40,15 @@ def clone(repo, branch, dir_name):
 
         if filtered_branch == branch:
             print("Repository already cloned with selected branch.")
+            print("-----------------------------------------------")
         else:
             print("Repository cloned, but with wrong branch. Removing old, cloning proper one.")
             os.popen('cd ../; rm -rf ' + dir_name + '; git clone \
                      --single-branch --branch ' + branch + " " + repo).read()
+            print("-----------------------------------------------")
     else:
         os.popen('cd ../; git clone --single-branch --branch ' + branch + ' ' + repo).read()
+        print("-----------------------------------------------")
 
     # Take second latest commit hash and write it down. Just to make sure, that script would catch next
     # newer commit and send message using Discord bot
@@ -96,7 +100,7 @@ def job(dir_name, sleep_time):
 def argument_parse(argv):
     print("\n→ " + datetime.now().strftime("%d/%m/%Y, %H:%M:%S"))
     parser = argparse.ArgumentParser\
-    (usage="python3 notify.py [--help] --repo <link> [--branch <branch>] [--time <sec>]", \
+    (usage="python3 notify.py [--help] --repo <link> [--branch <name>] [--time <sec>] [--loop <num>]", \
     description="Repo_Discord_Notify tool - get pinged, whenever new commit appears!", \
     epilog="© 2021, wiktor.kobiela, Repo_Discord_Notify - feel free to contribute", prog="Repo_Discord_Notify", \
     add_help=False, formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=120, width=250))
@@ -118,30 +122,44 @@ def argument_parse(argv):
 
     required.add_argument('-r', '--repo', action='store', dest="repo", help="repository link to cloned repo,\
                         with .git at the end", type=git_repo_regex, required=True, metavar="<link>")
+
     optional.add_argument('-b', '--branch', action='store', dest="branch", help="branch name, that will be cloned - \
                         default is master", default="master", metavar="<name>")
-    optional.add_argument('-t', '--time', action='store', dest="time", help="idle time between next pull&check - default \
-                        is 10s", type=positive_int, default=10, metavar="<time>")
-    helpful.add_argument('-v', '--version', action='version', version='%(prog)s alpha 21.3')
+    optional.add_argument('-t', '--time', action='store', dest="time", help="idle time between next pull&check - \
+                          default is 10s", type=positive_int, default=10, metavar="<sec>")
+    optional.add_argument('-l', '--loop', action='store', dest="loop", help="number of loops that script should make - \
+                          default is infinite", default=0, type=positive_int, metavar="<num>")
 
+    helpful.add_argument('-v', '--version', action='version', version='%(prog)s alpha 21.3')
     helpful.add_argument('-h', '--help', action='help', help='show this help message and exit')
 
     args = parser.parse_args()
-    return args.repo, args.branch, args.time
+    return args.repo, args.branch, args.time, args.loop
+
+
+def looping(loop, counter):
+    if loop == 0:
+        while True:
+            pull(dir_name)
+            job(dir_name, sleep_time)
+    else:
+        while counter < loop:
+            pull(dir_name)
+            job(dir_name, sleep_time)
+            counter += 1
+    return
 
 
 if __name__ == '__main__':
     # sys.stdout = open('log.txt', 'a+')  # Comment this, to enable live logging in terminal
-    repo, branch, sleep_time = argument_parse(sys.argv[1:])
+    repo, branch, sleep_time, loop = argument_parse(sys.argv[1:])
+    # loop == 0 if loop_numb = "Infinite" else loop_numb == loop
     print('-----------------------Settings--------------------------')
-    print(f'Repo: {repo}\nBranch: {branch}\nIdle time: {sleep_time}')
+    print(f'Repo: {repo}\nBranch: {branch}\nIdle time: {sleep_time}\nLoops: {"Inf" if loop == 0 else loop}')
     print('---------------------------------------------------------')
     dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
     get_files()
     clone(repo, branch, dir_name)
-    while True:  # Or while counter < given_number, to get finite number of loops
-        pull(dir_name)
-        job(dir_name, sleep_time)
-      # counter += 1
+    looping(loop, counter)
     # sys.stdout.close()  # Comment this, to enable live logging in terminal
-    # exit()  # Uncomment, if using finite number of loops
+    exit("Finished my job. Bye")

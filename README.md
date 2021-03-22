@@ -9,15 +9,15 @@ Discord bot integrated with simple python script which checks for new commits in
 ### How to use
 1. Clone repository
    ```
-   git clone https://git.kobiela.click/wiktor.kobiela/Repo_discord_notifier.git
+   git clone https://git.kobiela.click/wiktor.kobiela/Repo_Discord_Notify.git
    ```
 2. Create a file ```.webhook``` with your channel webhook link inside
-3. Start script. You can check available option by:
+3. Start script. You can check available options by:
    ```
     python3 notify.py --help
 
     → 20/03/2021, 18:01:29
-    usage: python3 notify.py [--help] --repo <link> [--branch <branch>] [--time <sec>]
+    usage: python3 notify.py [--help] --repo <link> [--branch <branch>] [--time <sec>] [--loops <num>]
     
     Repo_Discord_Notify tool - get pinged, whenever new commit appears!
     
@@ -27,6 +27,7 @@ Discord bot integrated with simple python script which checks for new commits in
     optional arguments:
       -b <name>, --branch <name>  branch name, that will be cloned - default is master
       -t <time>, --time <time>    idle time between next pull&check - default is 10s
+      -l <quan>, --loop <quan>    number of loops that script should make - default is infinite (0)
     
     helpful arguments:
       -v, --version               show program's version number and exit
@@ -36,14 +37,14 @@ Discord bot integrated with simple python script which checks for new commits in
    ```
 4. To start script, run in shell/screen:
    ```
-   python3 notify.py --repo <link_to_repo.git> --branch <branch_to_observe> --time <idle_time>
+   python3 notify.py --repo <link_to_repo.git> --branch <branch_to_observe> --time <idle_time> --loop <loops_num>
    e.g:
-   python3 notify.py --repo https://git.kobiela.click/wiktor.kobiela/Test.git --branch master --time 100
+   python3 notify.py --repo https://git.kobiela.click/wiktor.kobiela/Test.git --branch master --time 100 --loops 10
    ```
    a. or other scheduler e.g. this one on Synology (it allows running script at a given time, with preset number of loops in notify.py)
    ```
    cd /volume/path/to/script
-   python3 notify.py --repo <link_to_repo.git> --branch <branch_to_observe> --time <idle_time>
+   python3 notify.py --repo <link_to_repo.git> --branch <branch_to_observe> --time <idle_time> --loop <loops_num>
    ```
 ### Script at the beginning will:
    * Check, if given repo link is correct. 
@@ -57,6 +58,7 @@ Discord bot integrated with simple python script which checks for new commits in
    * Save ```last-1``` commit hash in global variable
       * It will send you notify about the latest commit, just to check if bot works, then it will override variable 
         with the latest commit hash
+   * Run forever or finite number of loops, if said so     
    * Will generate commit link using repo path and commit hash  
    * Will save its logs to ```log.txt``` file, if said so
 
@@ -99,7 +101,6 @@ command = f'./discord.sh \
 More information and source [HERE](https://github.com/ChaoticWeg/discord.sh#3-using-the-script).
 
 ### Additional setup
-   * If script should run constantly, or make a few rounds (e.g. 120 loops, with interval of 1 minute, to check for new commits between 7am and 9am) 
    * Your Discord message, bot name, avatar etc.  
 
 ### Contributing
