@@ -100,7 +100,7 @@ def job(dir_name, sleep_time):
 def argument_parse(argv):
     print("\n→ " + datetime.now().strftime("%d/%m/%Y, %H:%M:%S"))
     parser = argparse.ArgumentParser\
-    (usage="python3 notify.py [--help] --repo <link> [--branch <branch>] [--time <sec>]", \
+    (usage="python3 notify.py [--help] --repo <link> [--branch <name>] [--time <sec>] [--loop <num>]", \
     description="Repo_Discord_Notify tool - get pinged, whenever new commit appears!", \
     epilog="© 2021, wiktor.kobiela, Repo_Discord_Notify - feel free to contribute", prog="Repo_Discord_Notify", \
     add_help=False, formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=120, width=250))
@@ -126,9 +126,9 @@ def argument_parse(argv):
     optional.add_argument('-b', '--branch', action='store', dest="branch", help="branch name, that will be cloned - \
                         default is master", default="master", metavar="<name>")
     optional.add_argument('-t', '--time', action='store', dest="time", help="idle time between next pull&check - \
-                          default is 10s", type=positive_int, default=10, metavar="<time>")
+                          default is 10s", type=positive_int, default=10, metavar="<sec>")
     optional.add_argument('-l', '--loop', action='store', dest="loop", help="number of loops that script should make - \
-                          default is infinite", default=0, type=positive_int, metavar="<quan>")
+                          default is infinite", default=0, type=positive_int, metavar="<num>")
 
     helpful.add_argument('-v', '--version', action='version', version='%(prog)s alpha 21.3')
     helpful.add_argument('-h', '--help', action='help', help='show this help message and exit')
