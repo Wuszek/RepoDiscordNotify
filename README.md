@@ -17,7 +17,7 @@ Discord bot integrated with simple python script which checks for new commits in
     python3 notify.py --help
 
     → 20/03/2021, 18:01:29
-    usage: python3 notify.py [--help] --repo <link> [--branch <branch>] [--time <sec>] [--loops <num>]
+    usage: python3 notify.py [--help] --repo <link> [--branch <name>] [--time <sec>] [--loop <num>]
     
     Repo_Discord_Notify tool - get pinged, whenever new commit appears!
     
@@ -26,8 +26,8 @@ Discord bot integrated with simple python script which checks for new commits in
     
     optional arguments:
       -b <name>, --branch <name>  branch name, that will be cloned - default is master
-      -t <time>, --time <time>    idle time between next pull&check - default is 10s
-      -l <quan>, --loop <quan>    number of loops that script should make - default is infinite (0)
+      -t <sec>, --time <sec>    idle time between next pull&check - default is 10s
+      -l <num>, --loop <num>    number of loops that script should make - default is infinite (0)
     
     helpful arguments:
       -v, --version               show program's version number and exit
@@ -39,7 +39,7 @@ Discord bot integrated with simple python script which checks for new commits in
    ```
    python3 notify.py --repo <link_to_repo.git> --branch <branch_to_observe> --time <idle_time> --loop <loops_num>
    e.g:
-   python3 notify.py --repo https://git.kobiela.click/wiktor.kobiela/Test.git --branch master --time 100 --loops 10
+   python3 notify.py --repo https://git.kobiela.click/wiktor.kobiela/Test.git --branch master --time 100 --loop 10
    ```
    a. or other scheduler e.g. this one on Synology (it allows running script at a given time, with preset number of loops in notify.py)
    ```
