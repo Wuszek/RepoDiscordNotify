@@ -185,7 +185,7 @@ if __name__ == '__main__':
     print('---------------------------------------------------------')
     dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
     get_files()
-    if check == True: test()
+    if check: test()
     clone(repo, branch, dir_name)
     looping(loop, counter)
     # sys.stdout.close()  # Comment this, to enable live logging in terminal
