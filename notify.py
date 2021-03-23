@@ -52,15 +52,27 @@ def clone(repo, branch, dir_name):
 
     # Take second latest commit hash and write it down. Just to make sure, that script would catch next
     # newer commit and send message using Discord bot
+    latest_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --pretty=format:%H').read()
     if os.path.isfile(".commit"):
-        print("Commit file exists.")
+        file = open(".commit", "r+")
+        saved_name = [line.split() for line in file]
+        # print(saved_name[0][0])
+
+        if saved_name[0][0] == dir_name:
+            print(f"Commit file exists. Good dir name: {saved_name[0][0]}")
+            file.close()
+        else:
+            print(f'WRONG! Dir name: {dir_name} and saved_name: {saved_name[0][0]}')
+            file.truncate(0)
+            print(dir_name, latest_commit_hash, file=file)
+            file.close()
     else:
         file = open(".commit", "w+")
-        latest_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip 1 --pretty=format:%H').read()
-        file.write(latest_commit_hash)
+        # file.write(latest_commit_hash)
+        print(dir_name, latest_commit_hash, file=file)
         file.close()
-        print("Commit file created and filled. " + latest_commit_hash)
-    # latest_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip 1 --pretty=format:%H').read()
+        print(f"Commit file created and filled: {latest_commit_hash}")
+        # latest_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip 1 --pretty=format:%H').read()
     print("-----------------------------------------------")
     return
 
@@ -72,23 +84,27 @@ def pull(dir_name):
 
 def job(dir_name, sleep_time):
     # global latest_commit_hash
-    file = open(".commit", "r+")
-    previous_checked = os.linesep.join([s for s in file.read().splitlines() if s])
-    count = 0
+    f = open(".commit", "r+")
+    previous_checked = [line.split() for line in f]
 
+    # previous_checked = os.linesep.join([s for s in file.read().splitlines() if s])
+    print(f'Read from file: {previous_checked[0][1]}')
+    count = 0
+    # exit()
     while True:
         commit_name = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%s').read()
         commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
         commit_link = f"{repo[:-4]}/commit/"
 
-        if previous_checked == commit_hash:
+        if previous_checked[0][1] == commit_hash:
             print(f"No new updates. Sleeping for {sleep_time}s now.")
             actual_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --pretty=format:%H').read()
             # latest_commit_hash = actual_commit_hash
-            file.seek(0)
-            file.truncate()
-            file.write(actual_commit_hash)
-            file.close()
+            print(dir_name, actual_commit_hash, file=f)
+            # file.seek(0)
+            # file.truncate()
+            # file.write(actual_commit_hash)
+            # file.close()
             print("-----------------------------------------------")
             time.sleep(sleep_time)  # Set sleep time if no new commits found
             break
