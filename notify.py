@@ -58,21 +58,21 @@ def clone(repo, branch, dir_name):
     if os.path.isfile(".commit"):
         file = open(".commit", "r+")
         saved_name = [line.split() for line in file]
-        if saved_name[0][0] == dir_name:
-            print(f".commit file exists. Good dir name: {saved_name[0][0]}")
+        if saved_name[0][0] == dir_name & saved_name[0][1] == branch:
+            print(f".commit file exists. Dir and branch: {saved_name[0][0], saved_name[0][1]}")
             file.close()
         else:
-            print(f'WRONG! Dir name: {saved_name[0][0], saved_name[0][1]}')
+            print(f'WRONG! Dir name or branch: {saved_name[0][0], saved_name[0][1]}')
             file.seek(0)
             file.truncate()
-            print(dir_name, latest_commit_hash, file=file)
-            print(f'Filled with {dir_name, latest_commit_hash}')
+            print(dir_name, branch, latest_commit_hash, file=file)
+            print(f'Filled with {dir_name, branch, latest_commit_hash}')
             file.close()
     else:
         file = open(".commit", "w+")
-        print(dir_name, latest_commit_hash, file=file)
+        print(dir_name, branch, latest_commit_hash, file=file)
         file.close()
-        print(f".commit file created and filled: {dir_name, latest_commit_hash}")
+        print(f".commit file created and filled: {dir_name, branch, latest_commit_hash}")
     print("-----------------------------------------------")
     return
 
@@ -85,7 +85,7 @@ def pull(dir_name):
 def job(dir_name, sleep_time):
     file = open(".commit", "r+")
     previous_checked = [line.split() for line in file]
-    print(f'Hash from file: {previous_checked[0][1]}')
+    print(f'Hash from file: {previous_checked[0][2]}')
     count = 0
 
     while True:
@@ -93,7 +93,7 @@ def job(dir_name, sleep_time):
         commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
         commit_link = f"{repo[:-4]}/commit/"
 
-        if previous_checked[0][1] == commit_hash:
+        if previous_checked[0][2] == commit_hash:
             print(f"No new updates. Sleeping for {sleep_time}s now.")
             actual_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --pretty=format:%H').read()
             file.seek(0)
