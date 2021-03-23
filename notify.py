@@ -58,11 +58,11 @@ def clone(repo, branch, dir_name):
     if os.path.isfile(".commit"):
         file = open(".commit", "r+")
         saved_name = [line.split() for line in file]
-        if saved_name[0][0] == dir_name & saved_name[0][1] == branch:
+        if (saved_name[0][0] == dir_name) and (saved_name[0][1] == branch):
             print(f".commit file exists. Dir and branch: {saved_name[0][0], saved_name[0][1]}")
             file.close()
         else:
-            print(f'WRONG! Dir name or branch: {saved_name[0][0], saved_name[0][1]}')
+            print(f'WRONG! Dir name or branch: {saved_name[0][0], saved_name[0][1], saved_name[0][2]}')
             file.seek(0)
             file.truncate()
             print(dir_name, branch, latest_commit_hash, file=file)
@@ -98,7 +98,7 @@ def job(dir_name, sleep_time):
             actual_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --pretty=format:%H').read()
             file.seek(0)
             file.truncate()
-            print(dir_name, actual_commit_hash, file=file)
+            print(dir_name, branch, actual_commit_hash, file=file)
             print("-----------------------------------------------")
             time.sleep(sleep_time)  # Set sleep time if no new commits found
             break
@@ -159,7 +159,6 @@ def argument_parse(argv):
                              send test discord message before script starts", default=False)
     helpful.add_argument('-v', '--version', action='version', version='%(prog)s alpha 21.3')
     helpful.add_argument('-h', '--help', action='help', help='show this help message and exit')
-
 
     args = parser.parse_args()
     return args.repo, args.branch, args.time, args.loop, args.check
