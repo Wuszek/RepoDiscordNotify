@@ -9,7 +9,7 @@ from datetime import datetime
 import requests
 
 counter = 0  # Counter if you want to run script with finite number of loops. Leave it 0!
-latest_commit_hash = ""
+# latest_commit_hash = ""
 
 
 def get_files():
@@ -30,7 +30,7 @@ def get_files():
 
 
 def clone(repo, branch, dir_name):
-
+    # global latest_commit_hash
     if not os.popen(f'git ls-remote --heads {repo} {branch}').read():
         exit("Given branch does not exist in remote.")
     print("Valid repository url. Proceeding...")
@@ -40,20 +40,28 @@ def clone(repo, branch, dir_name):
 
         if filtered_branch == branch:
             print("Repository already cloned with selected branch.")
-            print("-----------------------------------------------")
+            # print("-----------------------------------------------")
         else:
             print("Repository cloned, but with wrong branch. Removing old, cloning proper one.")
             os.popen('cd ../; rm -rf ' + dir_name + '; git clone \
                      --single-branch --branch ' + branch + " " + repo).read()
-            print("-----------------------------------------------")
+            # print("-----------------------------------------------")
     else:
         os.popen('cd ../; git clone --single-branch --branch ' + branch + ' ' + repo).read()
-        print("-----------------------------------------------")
+
 
     # Take second latest commit hash and write it down. Just to make sure, that script would catch next
     # newer commit and send message using Discord bot
-    global latest_commit_hash
-    latest_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip 1 --pretty=format:%H').read()
+    if os.path.isfile(".commit"):
+        print("Commit file exists.")
+    else:
+        file = open(".commit", "w+")
+        latest_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip 1 --pretty=format:%H').read()
+        file.write(latest_commit_hash)
+        file.close()
+        print("Commit file created and filled. " + latest_commit_hash)
+    # latest_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip 1 --pretty=format:%H').read()
+    print("-----------------------------------------------")
     return
 
 
@@ -63,7 +71,9 @@ def pull(dir_name):
 
 
 def job(dir_name, sleep_time):
-    global latest_commit_hash
+    # global latest_commit_hash
+    file = open(".commit", "r+")
+    previous_checked = os.linesep.join([s for s in file.read().splitlines() if s])
     count = 0
 
     while True:
@@ -71,10 +81,14 @@ def job(dir_name, sleep_time):
         commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
         commit_link = f"{repo[:-4]}/commit/"
 
-        if latest_commit_hash == commit_hash:
+        if previous_checked == commit_hash:
             print(f"No new updates. Sleeping for {sleep_time}s now.")
             actual_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --pretty=format:%H').read()
-            latest_commit_hash = actual_commit_hash
+            # latest_commit_hash = actual_commit_hash
+            file.seek(0)
+            file.truncate()
+            file.write(actual_commit_hash)
+            file.close()
             print("-----------------------------------------------")
             time.sleep(sleep_time)  # Set sleep time if no new commits found
             break
@@ -82,17 +96,17 @@ def job(dir_name, sleep_time):
         else:
             print("New commit! -> " + commit_name)
             # EXAMPLE DISCORD BOT MESSAGE
-            command = f'./discord.sh \
-                        --username "NotificationBot" \
-                        --avatar "https://i.imgur.com/12jyR5Q.png" \
-                        --text "Commit appear: **{commit_name}** \\n path: <{commit_link}{commit_hash}>"'
+            # command = f'./discord.sh \
+            #             --username "NotificationBot" \
+            #             --avatar "https://i.imgur.com/12jyR5Q.png" \
+            #             --text "Commit appear: **{commit_name}** \\n path: <{commit_link}{commit_hash}>"'
             # DOCKERFILES DISCORD BOT MESSAGE
             # command = f'./discord.sh \
             #             --username "OpenVisualCloud" \
             #             --avatar "https://avatars3.githubusercontent.com/u/46843401?s=90&v=4" \
             #             --text "🐳 NEW COMMIT: **{commit_name}** \\n path: <{commit_link}{commit_hash}>"'
 
-            os.popen(command)
+            # os.popen(command)
             count = count + 1  # to move to next new commit
             print("-----------------------------------------------")
 
@@ -153,9 +167,8 @@ def looping(loop, counter):
 if __name__ == '__main__':
     # sys.stdout = open('log.txt', 'a+')  # Comment this, to enable live logging in terminal
     repo, branch, sleep_time, loop = argument_parse(sys.argv[1:])
-    # loop == 0 if loop_numb = "Infinite" else loop_numb == loop
     print('-----------------------Settings--------------------------')
-    print(f'Repo: {repo}\nBranch: {branch}\nIdle time: {sleep_time}\nLoops: {"Inf" if loop == 0 else loop}')
+    print(f'Repo: {repo}\nBranch: {branch}\nIdle time: {sleep_time}s\nLoops: {"Inf" if loop == 0 else loop}')
     print('---------------------------------------------------------')
     dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
     get_files()
