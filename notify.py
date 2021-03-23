@@ -32,7 +32,7 @@ def test():
     command = f'./discord.sh \
                             --username "NotificationBot" \
                             --avatar "https://i.imgur.com/12jyR5Q.png" \
-                            --text "Commit appear: **test value** \\n path: <test values>"'
+                            --text "Test message:  this is test message. That means, your .webhook file is fine."'
     os.popen(command)
     return
 
@@ -124,7 +124,7 @@ def job(dir_name, sleep_time):
 def argument_parse(argv):
     print("\n→ " + datetime.now().strftime("%d/%m/%Y, %H:%M:%S"))
     parser = argparse.ArgumentParser \
-        (usage="python3 notify.py [--help] --repo <link> [--branch <name>] [--time <sec>] [--loop <num>]", \
+        (usage="python3 notify.py [--help] --repo <link> [--branch <name>] [--time <sec>] [--loop <num>] [--check]", \
          description="Repo_Discord_Notify tool - get pinged, whenever new commit appears!", \
          epilog="© 2021, wiktor.kobiela, Repo_Discord_Notify - feel free to contribute", prog="Repo_Discord_Notify", \
          add_help=False, formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=120, width=250))
@@ -155,10 +155,11 @@ def argument_parse(argv):
     optional.add_argument('-l', '--loop', action='store', dest="loop", help="number of loops that script should make - \
                           default is infinite", default=0, type=positive_int, metavar="<num>")
 
+    helpful.add_argument('-c', '--check', action='store_true', dest="check", help="add this to your command, to \
+                             send test discord message before script starts", default=False)
     helpful.add_argument('-v', '--version', action='version', version='%(prog)s alpha 21.3')
     helpful.add_argument('-h', '--help', action='help', help='show this help message and exit')
-    helpful.add_argument('-c', '--check', action='store_true', dest="check", help="add this to your command, to \
-                         send test message before script start", default=False)
+
 
     args = parser.parse_args()
     return args.repo, args.branch, args.time, args.loop, args.check
