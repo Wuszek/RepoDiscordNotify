@@ -9,7 +9,6 @@ from datetime import datetime
 import requests
 
 counter = 0  # Counter if you want to run script with finite number of loops. Leave it 0!
-# latest_commit_hash = ""
 
 
 def get_files():
@@ -30,7 +29,6 @@ def get_files():
 
 
 def clone(repo, branch, dir_name):
-    # global latest_commit_hash
     if not os.popen(f'git ls-remote --heads {repo} {branch}').read():
         exit("Given branch does not exist in remote.")
     print("Valid repository url. Proceeding...")
@@ -40,15 +38,12 @@ def clone(repo, branch, dir_name):
 
         if filtered_branch == branch:
             print("Repository already cloned with selected branch.")
-            # print("-----------------------------------------------")
         else:
             print("Repository cloned, but with wrong branch. Removing old, cloning proper one.")
             os.popen('cd ../; rm -rf ' + dir_name + '; git clone \
                      --single-branch --branch ' + branch + " " + repo).read()
-            # print("-----------------------------------------------")
     else:
         os.popen('cd ../; git clone --single-branch --branch ' + branch + ' ' + repo).read()
-
 
     # Take latest commit hash and write it down. Just to make sure, that script would catch next
     # newer commit and send message using Discord bot
@@ -57,21 +52,20 @@ def clone(repo, branch, dir_name):
         file = open(".commit", "r+")
         saved_name = [line.split() for line in file]
         if saved_name[0][0] == dir_name:
-            print(f"Commit file exists. Good dir name: {saved_name[0][0]}")
+            print(f".commit file exists. Good dir name: {saved_name[0][0]}")
             file.close()
         else:
-            print(f'WRONG! Dir name: {dir_name} and saved_name: {saved_name[0][0]}')
+            print(f'WRONG! Dir name: {saved_name[0][0], saved_name[0][1]}')
             file.seek(0)
             file.truncate()
             print(dir_name, latest_commit_hash, file=file)
+            print(f'Filled with {dir_name, latest_commit_hash}')
             file.close()
     else:
         file = open(".commit", "w+")
-        # file.write(latest_commit_hash)
         print(dir_name, latest_commit_hash, file=file)
         file.close()
-        print(f"Commit file created and filled: {latest_commit_hash}")
-        # latest_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip 1 --pretty=format:%H').read()
+        print(f".commit file created and filled: {dir_name, latest_commit_hash}")
     print("-----------------------------------------------")
     return
 
@@ -82,14 +76,11 @@ def pull(dir_name):
 
 
 def job(dir_name, sleep_time):
-    # global latest_commit_hash
     file = open(".commit", "r+")
     previous_checked = [line.split() for line in file]
-
-    # previous_checked = os.linesep.join([s for s in file.read().splitlines() if s])
-    print(f'Read from file: {previous_checked[0][1]}')
+    print(f'Hash from file: {previous_checked[0][1]}')
     count = 0
-    # exit()
+
     while True:
         commit_name = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%s').read()
         commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
@@ -98,14 +89,9 @@ def job(dir_name, sleep_time):
         if previous_checked[0][1] == commit_hash:
             print(f"No new updates. Sleeping for {sleep_time}s now.")
             actual_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --pretty=format:%H').read()
-            # latest_commit_hash = actual_commit_hash
             file.seek(0)
             file.truncate()
             print(dir_name, actual_commit_hash, file=file)
-            # file.seek(0)
-
-            # file.write(actual_commit_hash)
-            # file.close()
             print("-----------------------------------------------")
             time.sleep(sleep_time)  # Set sleep time if no new commits found
             break
