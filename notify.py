@@ -9,7 +9,6 @@ from datetime import datetime
 import requests
 
 counter = 0  # Counter if you want to run script with finite number of loops. Leave it 0!
-latest_commit_hash = ""
 
 
 def get_files():
@@ -30,7 +29,6 @@ def get_files():
 
 
 def clone(repo, branch, dir_name):
-
     if not os.popen(f'git ls-remote --heads {repo} {branch}').read():
         exit("Given branch does not exist in remote.")
     print("Valid repository url. Proceeding...")
@@ -40,20 +38,33 @@ def clone(repo, branch, dir_name):
 
         if filtered_branch == branch:
             print("Repository already cloned with selected branch.")
-            print("-----------------------------------------------")
         else:
             print("Repository cloned, but with wrong branch. Removing old, cloning proper one.")
             os.popen('cd ../; rm -rf ' + dir_name + '; git clone \
                      --single-branch --branch ' + branch + " " + repo).read()
-            print("-----------------------------------------------")
     else:
         os.popen('cd ../; git clone --single-branch --branch ' + branch + ' ' + repo).read()
-        print("-----------------------------------------------")
 
-    # Take second latest commit hash and write it down. Just to make sure, that script would catch next
-    # newer commit and send message using Discord bot
-    global latest_commit_hash
-    latest_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip 1 --pretty=format:%H').read()
+    latest_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --pretty=format:%H').read()
+    if os.path.isfile(".commit"):
+        file = open(".commit", "r+")
+        saved_name = [line.split() for line in file]
+        if saved_name[0][0] == dir_name:
+            print(f".commit file exists. Good dir name: {saved_name[0][0]}")
+            file.close()
+        else:
+            print(f'WRONG! Dir name: {saved_name[0][0], saved_name[0][1]}')
+            file.seek(0)
+            file.truncate()
+            print(dir_name, latest_commit_hash, file=file)
+            print(f'Filled with {dir_name, latest_commit_hash}')
+            file.close()
+    else:
+        file = open(".commit", "w+")
+        print(dir_name, latest_commit_hash, file=file)
+        file.close()
+        print(f".commit file created and filled: {dir_name, latest_commit_hash}")
+    print("-----------------------------------------------")
     return
 
 
@@ -63,7 +74,9 @@ def pull(dir_name):
 
 
 def job(dir_name, sleep_time):
-    global latest_commit_hash
+    file = open(".commit", "r+")
+    previous_checked = [line.split() for line in file]
+    print(f'Hash from file: {previous_checked[0][1]}')
     count = 0
 
     while True:
@@ -71,10 +84,12 @@ def job(dir_name, sleep_time):
         commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --skip ' + str(count) + ' --pretty=format:%H').read()
         commit_link = f"{repo[:-4]}/commit/"
 
-        if latest_commit_hash == commit_hash:
+        if previous_checked[0][1] == commit_hash:
             print(f"No new updates. Sleeping for {sleep_time}s now.")
             actual_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --pretty=format:%H').read()
-            latest_commit_hash = actual_commit_hash
+            file.seek(0)
+            file.truncate()
+            print(dir_name, actual_commit_hash, file=file)
             print("-----------------------------------------------")
             time.sleep(sleep_time)  # Set sleep time if no new commits found
             break
@@ -153,9 +168,8 @@ def looping(loop, counter):
 if __name__ == '__main__':
     # sys.stdout = open('log.txt', 'a+')  # Comment this, to enable live logging in terminal
     repo, branch, sleep_time, loop = argument_parse(sys.argv[1:])
-    # loop == 0 if loop_numb = "Infinite" else loop_numb == loop
     print('-----------------------Settings--------------------------')
-    print(f'Repo: {repo}\nBranch: {branch}\nIdle time: {sleep_time}\nLoops: {"Inf" if loop == 0 else loop}')
+    print(f'Repo: {repo}\nBranch: {branch}\nIdle time: {sleep_time}s\nLoops: {"Inf" if loop == 0 else loop}')
     print('---------------------------------------------------------')
     dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
     get_files()
