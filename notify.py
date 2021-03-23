@@ -28,6 +28,15 @@ def get_files():
     return
 
 
+def test():
+    command = f'./discord.sh \
+                            --username "NotificationBot" \
+                            --avatar "https://i.imgur.com/12jyR5Q.png" \
+                            --text "Test message:  this is test message. That means, your .webhook file is fine."'
+    os.popen(command)
+    return
+
+
 def clone(repo, branch, dir_name):
     if not os.popen(f'git ls-remote --heads {repo} {branch}').read():
         exit("Given branch does not exist in remote.")
@@ -114,13 +123,14 @@ def job(dir_name, sleep_time):
 
 def argument_parse(argv):
     print("\n→ " + datetime.now().strftime("%d/%m/%Y, %H:%M:%S"))
-    parser = argparse.ArgumentParser\
-    (usage="python3 notify.py [--help] --repo <link> [--branch <name>] [--time <sec>] [--loop <num>]", \
-    description="Repo_Discord_Notify tool - get pinged, whenever new commit appears!", \
-    epilog="© 2021, wiktor.kobiela, Repo_Discord_Notify - feel free to contribute", prog="Repo_Discord_Notify", \
-    add_help=False, formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=120, width=250))
+    parser = argparse.ArgumentParser \
+        (usage="python3 notify.py [--help] --repo <link> [--branch <name>] [--time <sec>] [--loop <num>] [--check]", \
+         description="Repo_Discord_Notify tool - get pinged, whenever new commit appears!", \
+         epilog="© 2021, wiktor.kobiela, Repo_Discord_Notify - feel free to contribute", prog="Repo_Discord_Notify", \
+         add_help=False, formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=120, width=250))
 
-    def git_repo_regex(arg_value, pat=re.compile(r"^(([A-Za-z0-9]+@|http(|s)\:\/\/)|(http(|s)\:\/\/[A-Za-z0-9]+@))([A-Za-z0-9.]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git){1}$")):
+    def git_repo_regex(arg_value, pat=re.compile(
+        r"^(([A-Za-z0-9]+@|http(|s)\:\/\/)|(http(|s)\:\/\/[A-Za-z0-9]+@))([A-Za-z0-9.]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git){1}$")):
         if not pat.match(arg_value):
             raise argparse.ArgumentTypeError("Invalid repository url.")
         return arg_value
@@ -145,11 +155,14 @@ def argument_parse(argv):
     optional.add_argument('-l', '--loop', action='store', dest="loop", help="number of loops that script should make - \
                           default is infinite", default=0, type=positive_int, metavar="<num>")
 
+    helpful.add_argument('-c', '--check', action='store_true', dest="check", help="add this to your command, to \
+                             send test discord message before script starts", default=False)
     helpful.add_argument('-v', '--version', action='version', version='%(prog)s alpha 21.3')
     helpful.add_argument('-h', '--help', action='help', help='show this help message and exit')
 
+
     args = parser.parse_args()
-    return args.repo, args.branch, args.time, args.loop
+    return args.repo, args.branch, args.time, args.loop, args.check
 
 
 def looping(loop, counter):
@@ -167,12 +180,13 @@ def looping(loop, counter):
 
 if __name__ == '__main__':
     # sys.stdout = open('log.txt', 'a+')  # Comment this, to enable live logging in terminal
-    repo, branch, sleep_time, loop = argument_parse(sys.argv[1:])
+    repo, branch, sleep_time, loop, check = argument_parse(sys.argv[1:])
     print('-----------------------Settings--------------------------')
     print(f'Repo: {repo}\nBranch: {branch}\nIdle time: {sleep_time}s\nLoops: {"Inf" if loop == 0 else loop}')
     print('---------------------------------------------------------')
     dir_name = re.search(r"(([^/]+).{4})$", repo).group(2)
     get_files()
+    if check: test()
     clone(repo, branch, dir_name)
     looping(loop, counter)
     # sys.stdout.close()  # Comment this, to enable live logging in terminal

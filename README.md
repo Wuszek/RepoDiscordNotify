@@ -17,7 +17,7 @@ Discord bot integrated with simple python script which checks for new commits in
     python3 notify.py --help
 
     → 20/03/2021, 18:01:29
-    usage: python3 notify.py [--help] --repo <link> [--branch <name>] [--time <sec>] [--loop <num>]
+    usage: python3 notify.py [--help] --repo <link> [--branch <name>] [--time <sec>] [--loop <num>] [--check]
     
     Repo_Discord_Notify tool - get pinged, whenever new commit appears!
     
@@ -30,6 +30,7 @@ Discord bot integrated with simple python script which checks for new commits in
       -l <num>, --loop <num>    number of loops that script should make - default is infinite (0)
     
     helpful arguments:
+      -c, --check                 add this to your command, to send test discord message before script starts
       -v, --version               show program's version number and exit
       -h, --help                  show this help message and exit
     
