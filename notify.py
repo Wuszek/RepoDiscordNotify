@@ -45,8 +45,6 @@ def clone(repo, branch, dir_name):
     else:
         os.popen('cd ../; git clone --single-branch --branch ' + branch + ' ' + repo).read()
 
-    # Take latest commit hash and write it down. Just to make sure, that script would catch next
-    # newer commit and send message using Discord bot
     latest_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --pretty=format:%H').read()
     if os.path.isfile(".commit"):
         file = open(".commit", "r+")
@@ -99,17 +97,17 @@ def job(dir_name, sleep_time):
         else:
             print("New commit! -> " + commit_name)
             # EXAMPLE DISCORD BOT MESSAGE
-            # command = f'./discord.sh \
-            #             --username "NotificationBot" \
-            #             --avatar "https://i.imgur.com/12jyR5Q.png" \
-            #             --text "Commit appear: **{commit_name}** \\n path: <{commit_link}{commit_hash}>"'
+            command = f'./discord.sh \
+                        --username "NotificationBot" \
+                        --avatar "https://i.imgur.com/12jyR5Q.png" \
+                        --text "Commit appear: **{commit_name}** \\n path: <{commit_link}{commit_hash}>"'
             # DOCKERFILES DISCORD BOT MESSAGE
             # command = f'./discord.sh \
             #             --username "OpenVisualCloud" \
             #             --avatar "https://avatars3.githubusercontent.com/u/46843401?s=90&v=4" \
             #             --text "🐳 NEW COMMIT: **{commit_name}** \\n path: <{commit_link}{commit_hash}>"'
 
-            # os.popen(command)
+            os.popen(command)
             count = count + 1  # to move to next new commit
             print("-----------------------------------------------")
 
