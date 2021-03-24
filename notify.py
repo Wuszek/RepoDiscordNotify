@@ -34,6 +34,7 @@ def test():
                             --avatar "https://i.imgur.com/12jyR5Q.png" \
                             --text "Test message:  this is test message. That means, your .webhook file is fine."'
     os.popen(command)
+    print("--check flag enabled. Test message sent!")
     return
 
 
@@ -53,7 +54,10 @@ def clone(repo, branch, dir_name):
                      --single-branch --branch ' + branch + " " + repo).read()
     else:
         os.popen('cd ../; git clone --single-branch --branch ' + branch + ' ' + repo).read()
+    return
 
+
+def commit_check(branch, dir_name):
     latest_commit_hash = os.popen('cd ../' + dir_name + '; git log -1 --pretty=format:%H').read()
     if os.path.isfile(".commit"):
         file = open(".commit", "r+")
@@ -85,7 +89,7 @@ def pull(dir_name):
 def job(dir_name, sleep_time):
     file = open(".commit", "r+")
     previous_checked = [line.split() for line in file]
-    print(f'Hash from file: {previous_checked[0][2]}')
+    # print(f'Hash from file: {previous_checked[0][2]}')
     count = 0
 
     while True:
@@ -187,6 +191,7 @@ if __name__ == '__main__':
     get_files()
     if check: test()
     clone(repo, branch, dir_name)
+    commit_check(branch, dir_name)
     looping(loop, counter)
     # sys.stdout.close()  # Comment this, to enable live logging in terminal
-    exit("Finished my job. Bye")
+    exit("Finished my job.")
