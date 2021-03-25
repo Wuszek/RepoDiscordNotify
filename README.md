@@ -48,19 +48,32 @@ Discord bot integrated with simple python script which checks for new commits in
    python3 notify.py --repo <link_to_repo.git> --branch <branch_to_observe> --time <idle_time> --loop <loops_num>
    ```
 ### Script at the beginning will:
-   * Check, if given repo link is correct. 
-   * Check, if given branch actually exists on remote, default is 'master'  
-   * Check if discord.sh script exists, if no download and make it executable  
-      * Check for .webhook file
-   * Check, if given repository is on disk in ```cd ../```
-      * If not, download repository
-      * If yes but wrong branch, delete repo folder and download again with correct one
-      * If yes, leave it alone
-   * Save ```last-1``` commit hash in global variable
-      * It will send you notify about the latest commit, just to check if bot works, then it will override variable 
-        with the latest commit hash
-   * Run forever or finite number of loops, if said so     
-   * Will generate commit link using repo path and commit hash  
+   * With ```argument_parse()``` function:
+       * Parse all given arguments
+       * Check, if given link is valid repository link
+       * Check, if time and loop arguments are positive ints
+   * With ```get_files()``` function:
+       * Check, if ```discord.sh``` script is downloaded (if not, download and make it executable)
+       * Check, if ```.webhook``` file exists. If not, exit program.
+   * With ```test()``` function (if flag ```--check``` given):
+       * Send test message, to verify that ```.webhook``` and Discord connection works fine
+   * With ```clone()``` function:
+       * Check, if given branch exists on remote
+       * Check if repository is already downloaded, and with which branch
+            * If not, download repository
+            * If yes but wrong branch, delete repo folder and download again with correct one
+            * If yes, leave it alone
+   * With ```commit_check()``` function:
+       ```.commit``` file contains ('repo_name', 'branch_name', 'commit_hash')
+       * Check if ```.commit``` file exists, if not create it and fill with data
+       * If exists, check for repo_name and branch_name, if the same as given in commnad
+            * If the same, move forward (and check for new commits from this place)
+            * If not the same, clear file and fill with new data
+   * With ```job()``` function:
+      * Run forever on in loops
+      * Check for new commits (from last commit hash from ```.commit``` file)
+            * If new commit, send Discord notification (generate commit link using repo path and commit hash)
+      * If no new commits, wait given time until next loop
    * Will save its logs to ```log.txt``` file, if said so
 
 ### Sample discord message
