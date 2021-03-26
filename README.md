@@ -6,6 +6,11 @@ Discord bot integrated with simple python script which checks for new commits in
    - [discord.sh](https://github.com/ChaoticWeg/discord.sh) - bash integration for Discord webhooks
    - python3
 
+### Requirements
+Script requires wget, curl and jq to work properly. Just run:
+```pip3 install -r requirements.txt```
+to install all packages.
+
 ### How to use
 1. Clone repository
    ```
