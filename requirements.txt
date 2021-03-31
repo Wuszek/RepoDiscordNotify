@@ -1,3 +1,4 @@
 wget
 curl
+requests
 jq
