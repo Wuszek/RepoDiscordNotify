@@ -81,8 +81,13 @@ def commit_check(branch, dir_name):
     return
 
 
-def pull(dir_name):
-    os.popen('cd ../' + dir_name + '; git pull').read()
+def pull(dir_name, branch):
+    actual_branch = os.popen('cd ../' + dir_name + '; git branch').read()[2:]
+    filtered_branch = os.linesep.join([s for s in actual_branch.splitlines() if s])
+    if filtered_branch == branch:
+        os.popen('cd ../' + dir_name + '; git pull').read()
+    else:
+        exit("Branch has changed while script was working. Escaped from endless loop!")
     return
 
 
@@ -171,11 +176,11 @@ def argument_parse(argv):
 def looping(loop, counter):
     if loop == 0:
         while True:
-            pull(dir_name)
+            pull(dir_name, branch)
             job(dir_name, sleep_time)
     else:
         while counter < loop:
-            pull(dir_name)
+            pull(dir_name, branch)
             job(dir_name, sleep_time)
             counter += 1
     return
