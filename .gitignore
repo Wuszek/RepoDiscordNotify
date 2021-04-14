@@ -75,3 +75,6 @@ fabric.properties
 venv
 log.txt
 .webhook
+commit.txt
+discord.sh
+.commit
